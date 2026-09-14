@@ -1,93 +1,267 @@
-import { Github, Linkedin, Twitter, MessageCircle, MessageSquare, Mail, ArrowUp, Terminal, Shield } from 'lucide-react';
-import { DEV_INFO } from '../data/portfolioData';
+import React from 'react';
+import {
+  Sparkles,
+  MessageCircle,
+  Mail,
+  Phone,
+  ArrowUp,
+  Palette,
+  Code2,
+  TrendingUp,
+  Heart
+} from 'lucide-react';
+import { AGENCY_INFO, SERVICES_DATA } from '../data/agencyData';
 
-export default function Footer() {
+interface FooterProps {
+  onScrollTo: (id: string) => void;
+  onSelectService: (serviceId: string) => void;
+}
+
+export const Footer: React.FC<FooterProps> = ({ onScrollTo, onSelectService }) => {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const socialLinks = [
-    { name: 'GitHub', icon: Github, url: DEV_INFO.github },
-    { name: 'LinkedIn', icon: Linkedin, url: DEV_INFO.linkedin },
-    { name: 'Twitter / X', icon: Twitter, url: DEV_INFO.twitter },
-    {
-      name: 'WhatsApp',
-      icon: MessageCircle,
-      url: `https://wa.me/${DEV_INFO.whatsappNumber.replace(/[^0-9]/g, '')}`,
-    },
-    {
-      name: 'WhatsApp Channel',
-      icon: MessageSquare,
-      url: DEV_INFO.whatsappChannelUrl,
-    },
-    { name: 'Email', icon: Mail, url: `mailto:${DEV_INFO.email}` },
-  ];
+  const openWhatsApp = () => {
+    const text = encodeURIComponent('Hello Prime Plus Team! I would like to inquire about your digital agency services.');
+    window.open(`https://wa.me/${AGENCY_INFO.contacts.whatsapp.replace(/[^0-9]/g, '')}?text=${text}`, '_blank');
+  };
 
   return (
-    <footer className="relative bg-[#050510] border-t border-[#00D9FF]/20 pt-16 pb-12 px-4 sm:px-6 lg:px-8 overflow-hidden">
-      {/* Background glow strip */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-[1px] bg-gradient-to-r from-transparent via-[#00D9FF] to-transparent shadow-[0_0_15px_#00D9FF]" />
-
-      <div className="max-w-7xl mx-auto space-y-12">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-8">
-          {/* Brand Info */}
-          <div className="text-center md:text-left space-y-2">
-            <div className="flex items-center justify-center md:justify-start gap-2.5 font-orbitron text-xl font-bold tracking-wider text-white">
-              <Terminal className="w-5 h-5 text-[#00D9FF]" />
-              <span>
-                CYBER<span className="text-[#00D9FF] neon-text-blue">.DEV</span>
-              </span>
+    <footer className="bg-slate-950 border-t border-slate-800 text-slate-400 text-left pt-16 pb-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+          {/* Brand Col */}
+          <div className="lg:col-span-2 space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 via-sky-500 to-amber-300 p-[1.5px]">
+                <div className="w-full h-full bg-slate-950 rounded-2xl flex items-center justify-center font-black text-white text-lg font-['Outfit',sans-serif]">
+                  P+
+                </div>
+              </div>
+              <div>
+                <span className="font-extrabold text-xl tracking-tight text-white font-['Outfit',sans-serif]">
+                  PRIME PLUS TEAM
+                </span>
+                <p className="text-[11px] text-indigo-400 font-mono">
+                  Graphic Design • Web Development • Digital Marketing
+                </p>
+              </div>
             </div>
-            <p className="font-poppins text-xs text-gray-400 max-w-sm">
-              Crafting futuristic full-stack web architectures engineered to convert traffic into long-term clients.
+
+            <p className="text-xs sm:text-sm text-slate-400 leading-relaxed max-w-sm">
+              Prime Plus Team is an elite multidisciplinary digital agency. We construct bold brand identities, engineer resilient web applications, and scale customer acquisition through data-backed performance marketing.
             </p>
+
+            <div className="flex items-center gap-3 pt-2">
+              <button
+                onClick={openWhatsApp}
+                className="px-4 py-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-xs font-bold transition-colors cursor-pointer flex items-center gap-1.5"
+              >
+                <MessageCircle className="w-3.5 h-3.5" />
+                <span>WhatsApp Hotline</span>
+              </button>
+
+              <button
+                onClick={() => onScrollTo('contact-inquiry')}
+                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold transition-colors cursor-pointer"
+              >
+                Send Request
+              </button>
+            </div>
           </div>
 
-          {/* SOCIAL ICONS WITH NEON HOVER */}
-          <div className="flex items-center gap-3.5">
-            {socialLinks.map((social) => {
-              const Icon = social.icon;
-              return (
-                <a
-                  key={social.name}
-                  id={`social-${social.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`}
-                  href={social.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={social.name}
-                  className="w-11 h-11 rounded-lg bg-[#080C1C] border border-[#00D9FF]/30 flex items-center justify-center text-gray-300 hover:text-[#00FFFF] hover:border-[#00FFFF] shadow-[0_0_10px_rgba(0,217,255,0.15)] hover:shadow-[0_0_25px_rgba(0,255,255,0.8),inset_0_0_10px_rgba(0,217,255,0.3)] transform hover:-translate-y-1 transition-all duration-300"
+          {/* Graphic Design Col */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-1.5 text-pink-400 font-bold text-xs uppercase font-mono tracking-wider">
+              <Palette className="w-3.5 h-3.5" />
+              <span>Graphic Design</span>
+            </div>
+            <ul className="space-y-2 text-xs text-slate-400">
+              <li>
+                <button
+                  onClick={() => onSelectService('graphic-design')}
+                  className="hover:text-slate-200 transition-colors text-left"
                 >
-                  <Icon className="w-5 h-5" />
-                </a>
-              );
-            })}
+                  Brand Identity & Logos
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => onSelectService('graphic-design')}
+                  className="hover:text-slate-200 transition-colors text-left"
+                >
+                  UI/UX Systems in Figma
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => onSelectService('graphic-design')}
+                  className="hover:text-slate-200 transition-colors text-left"
+                >
+                  Social Media Creatives
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => onSelectService('graphic-design')}
+                  className="hover:text-slate-200 transition-colors text-left"
+                >
+                  Product Packaging & 3D
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => onSelectService('graphic-design')}
+                  className="hover:text-slate-200 transition-colors text-left"
+                >
+                  Motion Graphics & Lottie
+                </button>
+              </li>
+            </ul>
           </div>
 
-          {/* Back to Top Neon Button */}
-          <div>
-            <button
-              id="back-to-top-btn"
-              onClick={scrollToTop}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-md font-orbitron text-xs font-bold tracking-wider text-[#00D9FF] bg-[#050510] border border-[#00D9FF] shadow-[0_0_15px_rgba(0,217,255,0.3)] hover:border-[#00FFFF] hover:text-[#00FFFF] hover:shadow-[0_0_25px_rgba(0,255,255,0.7)] transition-all"
-            >
-              <span>RETURN TO TOP</span>
-              <ArrowUp className="w-4 h-4" />
-            </button>
+          {/* Web Development Col */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-1.5 text-sky-400 font-bold text-xs uppercase font-mono tracking-wider">
+              <Code2 className="w-3.5 h-3.5" />
+              <span>Web Development</span>
+            </div>
+            <ul className="space-y-2 text-xs text-slate-400">
+              <li>
+                <button
+                  onClick={() => onSelectService('web-development')}
+                  className="hover:text-slate-200 transition-colors text-left"
+                >
+                  React 19 & Next.js Portals
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => onSelectService('web-development')}
+                  className="hover:text-slate-200 transition-colors text-left"
+                >
+                  Shopify & E-Commerce Stores
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => onSelectService('web-development')}
+                  className="hover:text-slate-200 transition-colors text-left"
+                >
+                  Corporate CMS Websites
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => onSelectService('web-development')}
+                  className="hover:text-slate-200 transition-colors text-left"
+                >
+                  REST APIs & Node Backends
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => onSelectService('web-development')}
+                  className="hover:text-slate-200 transition-colors text-left"
+                >
+                  Core Web Vitals & Speed Tuning
+                </button>
+              </li>
+            </ul>
+          </div>
+
+          {/* Digital Marketing Col */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-1.5 text-amber-400 font-bold text-xs uppercase font-mono tracking-wider">
+              <TrendingUp className="w-3.5 h-3.5" />
+              <span>Digital Marketing</span>
+            </div>
+            <ul className="space-y-2 text-xs text-slate-400">
+              <li>
+                <button
+                  onClick={() => onSelectService('digital-marketing')}
+                  className="hover:text-slate-200 transition-colors text-left"
+                >
+                  Meta Ads (FB & IG) CAPI
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => onSelectService('digital-marketing')}
+                  className="hover:text-slate-200 transition-colors text-left"
+                >
+                  Google Ads (PMax & Search)
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => onSelectService('digital-marketing')}
+                  className="hover:text-slate-200 transition-colors text-left"
+                >
+                  Technical & Local SEO
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => onSelectService('digital-marketing')}
+                  className="hover:text-slate-200 transition-colors text-left"
+                >
+                  Social Media Management (SMM)
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => onSelectService('digital-marketing')}
+                  className="hover:text-slate-200 transition-colors text-left"
+                >
+                  Klaviyo Email Automation
+                </button>
+              </li>
+            </ul>
           </div>
         </div>
 
-        {/* System Telemetry & Copyright Bar */}
-        <div className="pt-8 border-t border-[#00D9FF]/10 flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-[11px] text-gray-500">
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-[#00D9FF] shadow-[0_0_6px_#00D9FF]" />
-            <span>LATENCY: 14ms // ALL SYSTEMS NOMINAL // MONGODB PROTOCOL ACTIVE</span>
+        {/* Bottom Bar with Back to Top */}
+        <div className="pt-8 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
+          <div className="flex items-center gap-2 text-slate-400">
+            <span>© {new Date().getFullYear()} Prime Plus Team. All Rights Reserved.</span>
+            <span className="hidden sm:inline">•</span>
+            <span className="hidden sm:inline font-mono text-slate-500">
+              Crafted with Precision for Global Growth
+            </span>
           </div>
 
-          <div>
-            &copy; {new Date().getFullYear()} {DEV_INFO.name}. ALL RIGHTS RESERVED. CODE THE FUTURE.
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => onScrollTo('cost-estimator')}
+              className="hover:text-slate-200 text-sky-400 font-mono"
+            >
+              Calculator
+            </button>
+            <button
+              onClick={() => onScrollTo('case-studies')}
+              className="hover:text-slate-200"
+            >
+              Portfolio
+            </button>
+            <button
+              onClick={() => onScrollTo('pricing-packages')}
+              className="hover:text-slate-200"
+            >
+              Pricing
+            </button>
+            <button
+              onClick={scrollToTop}
+              className="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 transition-colors cursor-pointer flex items-center gap-1 font-mono text-[11px]"
+              title="Back to Top"
+            >
+              <ArrowUp className="w-3.5 h-3.5" />
+              <span>Top</span>
+            </button>
           </div>
         </div>
       </div>
     </footer>
   );
-}
+};

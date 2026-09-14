@@ -1,187 +1,224 @@
-import { useState, useEffect, MouseEvent } from 'react';
-import { motion } from 'motion/react';
-import { ArrowDown, Code2, Sparkles, Cpu, Layers, ExternalLink } from 'lucide-react';
-import { DEV_INFO } from '../data/portfolioData';
+import React, { useState } from 'react';
+import {
+  Sparkles,
+  ArrowRight,
+  Palette,
+  Code2,
+  TrendingUp,
+  ShieldCheck,
+  Zap,
+  CheckCircle2,
+  MessageCircle,
+  Calculator,
+  Laptop,
+  Flame
+} from 'lucide-react';
+import { AGENCY_INFO, SERVICES_DATA } from '../data/agencyData';
 
-export default function Hero() {
-  const [mousePos, setMousePos] = useState({ x: 50, y: 50 });
+interface HeroProps {
+  onExploreServices: () => void;
+  onOpenInquiry: (initialService?: string) => void;
+  onOpenEstimator: () => void;
+  onSelectServiceTab: (serviceId: string) => void;
+}
 
-  const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width) * 100;
-    const y = ((e.clientY - rect.top) / rect.height) * 100;
-    setMousePos({ x, y });
-  };
+export const Hero: React.FC<HeroProps> = ({
+  onExploreServices,
+  onOpenInquiry,
+  onOpenEstimator,
+  onSelectServiceTab,
+}) => {
+  const [activeHeroPill, setActiveHeroPill] = useState<'all' | 'graphic-design' | 'web-development' | 'digital-marketing'>('all');
 
-  const scrollToSection = (id: string) => {
-    const el = document.querySelector(id);
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  const openWhatsApp = () => {
+    const text = encodeURIComponent(
+      'Hello Prime Plus Team! I would like to consult about our upcoming project for Graphic Design / Web Development / Digital Marketing.'
+    );
+    window.open(`https://wa.me/${AGENCY_INFO.contacts.whatsapp.replace(/[^0-9]/g, '')}?text=${text}`, '_blank');
   };
 
   return (
-    <section
-      id="hero"
-      onMouseMove={handleMouseMove}
-      className="relative min-h-[95vh] flex flex-col justify-center items-center pt-24 pb-16 px-4 sm:px-6 lg:px-8 overflow-hidden bg-[#050510]"
-    >
-      {/* 1. Animated Gradient Cyber Grid Background */}
-      <div className="absolute inset-0 pointer-events-none z-0">
-        {/* Animated Moving Grid */}
-        <div className="absolute inset-0 cyber-grid-bg animate-grid-flow opacity-60" />
+    <section id="hero" className="relative pt-8 pb-16 lg:pt-14 lg:pb-24 overflow-hidden">
+      {/* Dynamic Background Glows */}
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-indigo-600/15 rounded-full blur-3xl pointer-events-none -z-10 animate-pulse" />
+      <div className="absolute top-20 right-1/4 w-96 h-96 bg-sky-500/10 rounded-full blur-3xl pointer-events-none -z-10" />
+      <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 w-full max-w-5xl h-48 bg-amber-500/5 rounded-full blur-3xl pointer-events-none -z-10" />
 
-        {/* Cyberpunk Perspective Floor Grid */}
-        <div
-          className="absolute bottom-0 left-0 right-0 h-[45vh] opacity-35"
-          style={{
-            background:
-              'linear-gradient(to top, rgba(0, 217, 255, 0.15) 1px, transparent 1px), linear-gradient(to right, rgba(0, 217, 255, 0.15) 1px, transparent 1px)',
-            backgroundSize: '40px 40px',
-            transform: 'perspective(500px) rotateX(60deg)',
-            transformOrigin: 'bottom center',
-          }}
-        />
-
-        {/* Ambient Dark Vignette & Color Gradients */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#050510] via-transparent to-[#050510]/80" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#050510] via-transparent to-[#050510]" />
-      </div>
-
-      {/* 2. Dynamic Mouse-Follow Neon Glow Effect */}
-      <div
-        className="absolute pointer-events-none transition-transform duration-200 ease-out z-0 w-[600px] h-[600px] rounded-full blur-[120px] opacity-30"
-        style={{
-          background: 'radial-gradient(circle, #00D9FF 0%, #00FFFF 25%, rgba(0,217,255,0.05) 70%, transparent 100%)',
-          left: `${mousePos.x}%`,
-          top: `${mousePos.y}%`,
-          transform: 'translate(-50%, -50%)',
-        }}
-      />
-
-      {/* Decorative Cyber Floating Elements */}
-      <div className="absolute top-28 left-8 hidden lg:block opacity-30 pointer-events-none font-mono text-[11px] text-[#00D9FF] space-y-1">
-        <p>&gt; CORE_VERSION: v4.19.0-CYBER</p>
-        <p>&gt; RUNTIME: NODE.JS_EXPRESS</p>
-        <p>&gt; MEMORY_ALLOC: 64.2 MB</p>
-      </div>
-
-      <div className="absolute top-28 right-8 hidden lg:block opacity-30 pointer-events-none font-mono text-[11px] text-[#00FFFF] text-right space-y-1">
-        <p>&lt;STATUS: NOMINAL&gt;</p>
-        <p>&lt;SECURITY: ENCRYPTED_TLS&gt;</p>
-        <p>&lt;DB_INTEGRATION: MONGODB&gt;</p>
-      </div>
-
-      {/* Main Content Container */}
-      <div className="relative z-10 max-w-5xl mx-auto text-center flex flex-col items-center">
-        {/* Futuristic Status Badge */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full border border-[#00D9FF]/40 bg-[#00D9FF]/10 backdrop-blur-md shadow-[0_0_15px_rgba(0,217,255,0.25)] mb-6"
-        >
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00FFFF] opacity-75" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-[#00D9FF]" />
-          </span>
-          <span className="font-mono text-xs tracking-wider text-[#00FFFF] uppercase font-semibold">
-            {DEV_INFO.availability}
-          </span>
-        </motion.div>
-
-        {/* MAIN HEADING: "I Code The Future" in Big Neon Blue Text */}
-        <motion.h1
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.7, delay: 0.1 }}
-          className="font-orbitron font-black text-4xl sm:text-6xl md:text-7xl lg:text-8xl tracking-tight text-white uppercase"
-        >
-          I Code{' '}
-          <span className="relative inline-block text-[#00D9FF] neon-text-blue">
-            The Future
-            <motion.span
-              className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#00FFFF] to-transparent shadow-[0_0_12px_#00FFFF]"
-              initial={{ width: 0 }}
-              animate={{ width: '100%' }}
-              transition={{ duration: 1, delay: 0.5 }}
-            />
-          </span>
-        </motion.h1>
-
-        {/* SUBTEXT: "Websites that convert visitors into clients" */}
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          className="mt-6 text-lg sm:text-xl md:text-2xl font-poppins text-gray-200 max-w-3xl leading-relaxed tracking-wide font-normal"
-        >
-          Websites that <span className="text-[#00FFFF] font-semibold">convert visitors into clients</span>.
-          Engineered with hyper-fast performance, cinematic cyber visuals, and clean full-stack architecture.
-        </motion.p>
-
-        {/* Core Metrics Pill Bar */}
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="mt-8 flex flex-wrap justify-center items-center gap-3 sm:gap-6 font-mono text-xs sm:text-sm text-gray-300"
-        >
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded bg-[#080C1C]/70 border border-[#00D9FF]/20 backdrop-blur-sm">
-            <span className="text-[#00D9FF] font-bold">99+</span>
-            <span className="text-gray-400">Lighthouse Score</span>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-8">
+        {/* Top Badges & Urdu Subtitle */}
+        <div className="flex flex-col items-center gap-3">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-950/80 border border-indigo-500/30 text-indigo-300 text-xs font-mono shadow-inner">
+            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+            <span className="font-semibold tracking-wide">PRIME PLUS TEAM • FULL-SERVICE DIGITAL POWERHOUSE</span>
           </div>
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded bg-[#080C1C]/70 border border-[#00D9FF]/20 backdrop-blur-sm">
-            <span className="text-[#00FFFF] font-bold">&lt; 0.5s</span>
-            <span className="text-gray-400">Load Latency</span>
-          </div>
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded bg-[#080C1C]/70 border border-[#00D9FF]/20 backdrop-blur-sm">
-            <span className="text-[#00D9FF] font-bold">100%</span>
-            <span className="text-gray-400">Conversion Focused</span>
-          </div>
-        </motion.div>
 
-        {/* 2 Buttons: "Hire Me" and "My Work" with neon border */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.5 }}
-          className="mt-10 flex flex-col sm:flex-row items-center gap-4 sm:gap-6 w-full sm:w-auto"
-        >
-          {/* Button 1: "Hire Me" */}
+          <div className="text-slate-400 text-sm font-medium tracking-wide">
+            <span className="text-slate-300 font-semibold">پرائم پلس ٹیم:</span> برانڈ گرافک ڈیزائننگ، جدید ویب ڈویلپمنٹ اور ہائی آر او آئی ڈیجیٹل مارکیٹنگ
+          </div>
+        </div>
+
+        {/* Hero Main Headline */}
+        <div className="max-w-4xl mx-auto space-y-4">
+          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black text-white tracking-tight leading-[1.1] font-['Outfit',sans-serif]">
+            We Design Brands, Code <span className="bg-gradient-to-r from-sky-400 via-indigo-300 to-amber-300 bg-clip-text text-transparent">Fast Web Apps</span> & Scale <span className="bg-gradient-to-r from-amber-400 to-rose-400 bg-clip-text text-transparent">Revenue</span>.
+          </h1>
+          <p className="text-base sm:text-xl text-slate-300 max-w-3xl mx-auto leading-relaxed font-normal">
+            {AGENCY_INFO.shortBio}
+          </p>
+        </div>
+
+        {/* 3 Pillars Interactive Tab Switcher in Hero */}
+        <div className="max-w-3xl mx-auto bg-slate-900/90 border border-slate-800 p-2 rounded-2xl sm:rounded-3xl backdrop-blur-xl shadow-2xl">
+          <div className="grid grid-cols-3 gap-1.5 sm:gap-2 text-xs sm:text-sm font-semibold">
+            <button
+              onClick={() => {
+                setActiveHeroPill('graphic-design');
+                onSelectServiceTab('graphic-design');
+              }}
+              className={`p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl transition-all cursor-pointer flex flex-col sm:flex-row items-center justify-center gap-2 ${
+                activeHeroPill === 'graphic-design'
+                  ? 'bg-gradient-to-r from-pink-600 to-rose-600 text-white shadow-lg shadow-pink-600/30 font-bold scale-[1.02]'
+                  : 'bg-slate-800/60 text-slate-300 hover:text-white hover:bg-slate-800'
+              }`}
+            >
+              <Palette className="w-4 h-4 sm:w-5 sm:h-5 text-pink-300" />
+              <span>Graphic Design</span>
+            </button>
+
+            <button
+              onClick={() => {
+                setActiveHeroPill('web-development');
+                onSelectServiceTab('web-development');
+              }}
+              className={`p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl transition-all cursor-pointer flex flex-col sm:flex-row items-center justify-center gap-2 ${
+                activeHeroPill === 'web-development'
+                  ? 'bg-gradient-to-r from-sky-600 to-indigo-600 text-white shadow-lg shadow-sky-600/30 font-bold scale-[1.02]'
+                  : 'bg-slate-800/60 text-slate-300 hover:text-white hover:bg-slate-800'
+              }`}
+            >
+              <Code2 className="w-4 h-4 sm:w-5 sm:h-5 text-sky-300" />
+              <span>Web Development</span>
+            </button>
+
+            <button
+              onClick={() => {
+                setActiveHeroPill('digital-marketing');
+                onSelectServiceTab('digital-marketing');
+              }}
+              className={`p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl transition-all cursor-pointer flex flex-col sm:flex-row items-center justify-center gap-2 ${
+                activeHeroPill === 'digital-marketing'
+                  ? 'bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/30 font-bold scale-[1.02]'
+                  : 'bg-slate-800/60 text-slate-300 hover:text-white hover:bg-slate-800'
+              }`}
+            >
+              <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-amber-300" />
+              <span>Digital Marketing</span>
+            </button>
+          </div>
+
+          {/* Quick Preview snippet based on selected pill */}
+          <div className="mt-3 pt-3 border-t border-slate-800 text-left px-2 sm:px-3 text-xs sm:text-sm">
+            {activeHeroPill === 'graphic-design' && (
+              <div className="flex flex-wrap items-center justify-between gap-2 text-slate-300">
+                <div className="flex items-center gap-2 font-mono text-pink-400">
+                  <CheckCircle2 className="w-4 h-4" />
+                  <span>Logos, Vector Brand Guides, UI/UX in Figma, Packaging & 3D Renders</span>
+                </div>
+                <button
+                  onClick={() => onSelectServiceTab('graphic-design')}
+                  className="text-xs text-pink-400 hover:underline font-bold flex items-center gap-1"
+                >
+                  View All Design Deliverables <ArrowRight className="w-3 h-3" />
+                </button>
+              </div>
+            )}
+
+            {activeHeroPill === 'web-development' && (
+              <div className="flex flex-wrap items-center justify-between gap-2 text-slate-300">
+                <div className="flex items-center gap-2 font-mono text-sky-400">
+                  <CheckCircle2 className="w-4 h-4" />
+                  <span>React 19, Next.js, Node.js, Custom SaaS, Shopify & 100/100 Lighthouse</span>
+                </div>
+                <button
+                  onClick={() => onSelectServiceTab('web-development')}
+                  className="text-xs text-sky-400 hover:underline font-bold flex items-center gap-1"
+                >
+                  View Engineering Specs <ArrowRight className="w-3 h-3" />
+                </button>
+              </div>
+            )}
+
+            {activeHeroPill === 'digital-marketing' && (
+              <div className="flex flex-wrap items-center justify-between gap-2 text-slate-300">
+                <div className="flex items-center gap-2 font-mono text-amber-400">
+                  <CheckCircle2 className="w-4 h-4" />
+                  <span>Meta Ads CAPI, Google Ads PMax, Technical SEO & Klaviyo Funnels</span>
+                </div>
+                <button
+                  onClick={() => onSelectServiceTab('digital-marketing')}
+                  className="text-xs text-amber-400 hover:underline font-bold flex items-center gap-1"
+                >
+                  View Marketing Strategy <ArrowRight className="w-3 h-3" />
+                </button>
+              </div>
+            )}
+
+            {activeHeroPill === 'all' && (
+              <div className="flex flex-wrap items-center justify-between gap-2 text-slate-400 text-xs">
+                <span>Select any discipline above to preview specific tool stacks and core deliverables.</span>
+                <span className="text-indigo-400 font-mono">100% In-House Senior Execution</span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Primary Action Buttons */}
+        <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 pt-2">
           <button
-            id="hero-hire-btn"
-            onClick={() => scrollToSection('#contact')}
-            className="w-full sm:w-auto relative group overflow-hidden px-8 py-4 rounded-md font-orbitron font-bold text-sm tracking-wider text-[#050510] bg-[#00D9FF] hover:bg-[#00FFFF] transition-all duration-300 shadow-[0_0_25px_rgba(0,217,255,0.7)] hover:shadow-[0_0_40px_rgba(0,255,255,1)] transform hover:-translate-y-1"
+            onClick={() => onOpenInquiry()}
+            className="px-6 sm:px-8 py-3.5 sm:py-4 rounded-2xl bg-gradient-to-r from-sky-500 via-indigo-600 to-purple-600 hover:from-sky-400 hover:to-purple-500 text-white font-extrabold text-base shadow-[0_0_30px_rgba(99,102,241,0.5)] transition-all cursor-pointer flex items-center gap-2.5 scale-100 hover:scale-[1.02]"
           >
-            <div className="flex items-center justify-center gap-2.5">
-              <span>HIRE ME</span>
-              <Sparkles className="w-4 h-4 text-[#050510]" />
-            </div>
+            <span>Start Your Project</span>
+            <ArrowRight className="w-5 h-5" />
           </button>
 
-          {/* Button 2: "My Work" with neon border */}
           <button
-            id="hero-work-btn"
-            onClick={() => scrollToSection('#portfolio')}
-            className="w-full sm:w-auto group relative px-8 py-4 rounded-md font-orbitron font-bold text-sm tracking-wider text-white bg-[#050510]/80 border-2 border-[#00D9FF] shadow-[0_0_15px_rgba(0,217,255,0.35)] hover:border-[#00FFFF] hover:shadow-[0_0_30px_rgba(0,217,255,0.8),inset_0_0_15px_rgba(0,217,255,0.3)] transition-all duration-300 transform hover:-translate-y-1"
+            onClick={onOpenEstimator}
+            className="px-6 sm:px-7 py-3.5 sm:py-4 rounded-2xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700 text-slate-200 hover:text-white font-bold text-base transition-all cursor-pointer flex items-center gap-2.5"
           >
-            <div className="flex items-center justify-center gap-2.5 group-hover:text-[#00FFFF]">
-              <span>MY WORK</span>
-              <ExternalLink className="w-4 h-4 text-[#00D9FF] group-hover:text-[#00FFFF] transition-transform group-hover:translate-x-0.5" />
-            </div>
+            <Calculator className="w-5 h-5 text-sky-400" />
+            <span>Interactive Cost Calculator</span>
           </button>
-        </motion.div>
 
-        {/* Scroll Indicator */}
-        <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}
-          className="mt-14 cursor-pointer text-gray-400 hover:text-[#00D9FF] transition-colors flex flex-col items-center gap-2"
-          onClick={() => scrollToSection('#services')}
-        >
-          <span className="font-mono text-[11px] tracking-widest uppercase text-gray-500">INITIALIZE SCROLL</span>
-          <ArrowDown className="w-4 h-4 text-[#00D9FF] shadow-[0_0_8px_#00D9FF]" />
-        </motion.div>
+          <button
+            onClick={openWhatsApp}
+            className="px-5 py-3.5 sm:py-4 rounded-2xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 font-bold text-base transition-all cursor-pointer flex items-center gap-2"
+          >
+            <MessageCircle className="w-5 h-5" />
+            <span>Chat on WhatsApp</span>
+          </button>
+        </div>
+
+        {/* Trust Badges & Verified Stats Row */}
+        <div className="pt-8 border-t border-slate-800/80 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-5xl mx-auto">
+          {AGENCY_INFO.stats.map((stat, idx) => (
+            <div
+              key={idx}
+              className="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 text-left transition-all hover:border-slate-700"
+            >
+              <div className="text-2xl sm:text-3xl font-black text-white font-['Outfit',sans-serif] tracking-tight">
+                {stat.value}
+              </div>
+              <div className="text-xs sm:text-sm font-semibold text-slate-200 mt-0.5">
+                {stat.label}
+              </div>
+              <div className="text-[11px] text-slate-500 font-mono mt-0.5">
+                {stat.sub}
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );
-}
+};
