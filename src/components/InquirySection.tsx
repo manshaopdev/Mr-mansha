@@ -11,20 +11,25 @@ import {
   ShieldCheck,
   Building2,
   Copy,
-  Check
+  Check,
+  ExternalLink
 } from 'lucide-react';
-import { Currency, InquiryFormData } from '../types/agency';
+import { Currency, InquiryFormData, ClientProject } from '../types/agency';
 import { AGENCY_INFO } from '../data/agencyData';
 
 interface InquirySectionProps {
   currency: Currency;
   initialService?: string;
   onScrollToTop?: () => void;
+  onClientCreated?: (project: ClientProject) => void;
+  onOpenPortal?: (projectId: string) => void;
 }
 
 export const InquirySection: React.FC<InquirySectionProps> = ({
   currency,
   initialService,
+  onClientCreated,
+  onOpenPortal
 }) => {
   const [formData, setFormData] = useState<InquiryFormData>({
     name: '',
@@ -64,6 +69,56 @@ export const InquirySection: React.FC<InquirySectionProps> = ({
     e.preventDefault();
     const refCode = 'PPT-' + Math.floor(100000 + Math.random() * 900000);
     setSubmittedId(refCode);
+
+    if (onClientCreated) {
+      const isMulti = formData.selectedServices.length > 1;
+      const cat = isMulti
+        ? 'All-in-One Suite'
+        : formData.selectedServices[0]?.includes('Graphic')
+        ? 'Graphic Design'
+        : formData.selectedServices[0]?.includes('Marketing')
+        ? 'Digital Marketing'
+        : 'Web Development';
+
+      const newProj: ClientProject = {
+        id: refCode,
+        clientName: formData.name || 'Client',
+        clientCompany: formData.company || `${formData.name}'s Brand`,
+        clientEmail: formData.email,
+        clientPhone: formData.phone || '+92 332 6032893',
+        projectTitle: `${formData.selectedServices.join(' & ') || 'Custom Digital Project'}`,
+        category: cat,
+        currentPhase: 'Discovery & Brief',
+        progressPercent: 20,
+        startDate: 'Today',
+        targetLaunch: formData.timeline || 'Within 3 - 4 Weeks',
+        leadArchitect: {
+          name: 'Muhammad Farhan',
+          role: 'Creative & Technical Lead',
+          phone: '+92 332 6032893',
+        },
+        milestones: [
+          { step: '01', title: 'Intake Brief & Discovery Consultation', status: 'in-progress', date: 'Active Today', description: 'Reviewing scope, audience personas, and technical parameters.' },
+          { step: '02', title: 'Brand Architecture & Design Tokens', status: 'pending', date: 'Week 1', description: 'High-fidelity Figma wireframes and visual design direction.' },
+          { step: '03', title: 'Full-Stack Development & Ad Setup', status: 'pending', date: 'Week 2-3', description: 'Modular coding, database integration, or CAPI ad setups.' },
+          { step: '04', title: 'Staging QA & Cross-Browser Verification', status: 'pending', date: 'Week 3-4', description: 'Lighthouse 95+ score audits and client testing link.' },
+          { step: '05', title: 'Public Domain Launch & Handover', status: 'pending', date: formData.timeline, description: 'Production deployment, DNS handover, and source files transfer.' }
+        ],
+        deliverables: [
+          { name: 'Initial Discovery Brief & Estimate', category: 'Project Management', format: 'PDF Document', status: 'ready' },
+          { name: 'Architecture Blueprint', category: 'Technical Design', format: 'Figma / Schema', status: 'working' }
+        ],
+        financials: {
+          totalPkr: currency === 'PKR' ? 120000 : 750 * 280,
+          totalUsd: currency === 'USD' ? 750 : 450,
+          status: 'Inquiry Pending Confirmation',
+          invoiceNumber: 'EST-' + refCode.replace('PPT-', '')
+        },
+        recentUpdate: 'Project intake received. Team lead is currently analyzing the scope and preparing custom milestone breakdown.'
+      };
+
+      onClientCreated(newProj);
+    }
   };
 
   const openDirectWhatsApp = () => {
@@ -87,7 +142,7 @@ export const InquirySection: React.FC<InquirySectionProps> = ({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-mono">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/10 border border-red-500/30 text-yellow-400 text-xs font-mono">
             <Mail className="w-3.5 h-3.5" />
             <span>START THE CONVERSATION</span>
           </div>
@@ -104,7 +159,7 @@ export const InquirySection: React.FC<InquirySectionProps> = ({
           {/* Agency Contact Card (Left column) */}
           <div className="lg:col-span-5 p-6 sm:p-8 rounded-3xl bg-slate-900 border border-slate-800 shadow-2xl space-y-8 text-left">
             <div className="space-y-2">
-              <span className="text-xs font-mono text-indigo-400 font-bold uppercase tracking-wider">
+              <span className="text-xs font-mono text-yellow-400 font-bold uppercase tracking-wider">
                 Direct Contact Channels
               </span>
               <h3 className="text-2xl font-black text-white font-['Outfit',sans-serif]">
@@ -142,11 +197,11 @@ export const InquirySection: React.FC<InquirySectionProps> = ({
                 href={`mailto:${AGENCY_INFO.contacts.email}`}
                 className="p-4 rounded-2xl bg-slate-800/60 border border-slate-700/60 hover:bg-slate-800 transition-all flex items-center gap-4 group"
               >
-                <div className="w-12 h-12 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                <div className="w-12 h-12 rounded-xl bg-red-500/20 text-red-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
                   <Mail className="w-6 h-6" />
                 </div>
                 <div>
-                  <div className="text-xs font-mono text-indigo-400 font-bold">
+                  <div className="text-xs font-mono text-yellow-400 font-bold">
                     Official Inquiries & RFP
                   </div>
                   <div className="text-sm font-bold text-white">
@@ -160,11 +215,11 @@ export const InquirySection: React.FC<InquirySectionProps> = ({
 
               {/* Phone */}
               <div className="p-4 rounded-2xl bg-slate-800/60 border border-slate-700/60 flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-sky-500/20 text-sky-400 flex items-center justify-center shrink-0">
+                <div className="w-12 h-12 rounded-xl bg-yellow-500/20 text-yellow-400 flex items-center justify-center shrink-0">
                   <Phone className="w-6 h-6" />
                 </div>
                 <div>
-                  <div className="text-xs font-mono text-sky-400 font-bold">
+                  <div className="text-xs font-mono text-yellow-400 font-bold">
                     Direct Phone Support
                   </div>
                   <div className="text-sm font-bold text-white">
@@ -178,11 +233,11 @@ export const InquirySection: React.FC<InquirySectionProps> = ({
 
               {/* Location */}
               <div className="p-4 rounded-2xl bg-slate-800/60 border border-slate-700/60 flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center shrink-0">
+                <div className="w-12 h-12 rounded-xl bg-red-500/20 text-red-400 flex items-center justify-center shrink-0">
                   <MapPin className="w-6 h-6" />
                 </div>
                 <div>
-                  <div className="text-xs font-mono text-purple-400 font-bold">
+                  <div className="text-xs font-mono text-yellow-400 font-bold">
                     Studio Locations
                   </div>
                   <div className="text-sm font-bold text-white">
@@ -239,14 +294,25 @@ export const InquirySection: React.FC<InquirySectionProps> = ({
                   </button>
                 </div>
 
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4">
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4 flex-wrap">
                   <button
                     onClick={openDirectWhatsApp}
-                    className="px-6 py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm shadow-lg flex items-center gap-2 cursor-pointer"
+                    className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm shadow-lg flex items-center justify-center gap-2 cursor-pointer"
                   >
                     <MessageCircle className="w-4 h-4" />
-                    <span>Connect Instantly on WhatsApp</span>
+                    <span>Connect on WhatsApp (+92 332 6032893)</span>
                   </button>
+
+                  {onOpenPortal && (
+                    <button
+                      onClick={() => onOpenPortal(submittedId)}
+                      className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-bold text-sm shadow-lg flex items-center justify-center gap-2 cursor-pointer"
+                    >
+                      <ShieldCheck className="w-4 h-4" />
+                      <span>Track in Client Portal</span>
+                    </button>
+                  )}
+
                   <button
                     onClick={() => {
                       setSubmittedId(null);
@@ -262,7 +328,7 @@ export const InquirySection: React.FC<InquirySectionProps> = ({
                         currency: currency,
                       });
                     }}
-                    className="px-5 py-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-medium cursor-pointer"
+                    className="w-full sm:w-auto px-5 py-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-medium cursor-pointer"
                   >
                     Submit Another Inquiry
                   </button>
@@ -291,7 +357,7 @@ export const InquirySection: React.FC<InquirySectionProps> = ({
                       placeholder="e.g. Usman Malik"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 focus:border-indigo-500 text-white placeholder:text-slate-500 text-xs sm:text-sm outline-none transition-colors"
+                      className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 focus:border-yellow-400 text-white placeholder:text-slate-500 text-xs sm:text-sm outline-none transition-colors"
                     />
                   </div>
 
@@ -304,7 +370,7 @@ export const InquirySection: React.FC<InquirySectionProps> = ({
                       placeholder="e.g. Apex Innovations Ltd"
                       value={formData.company}
                       onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 focus:border-indigo-500 text-white placeholder:text-slate-500 text-xs sm:text-sm outline-none transition-colors"
+                      className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 focus:border-yellow-400 text-white placeholder:text-slate-500 text-xs sm:text-sm outline-none transition-colors"
                     />
                   </div>
 
@@ -318,7 +384,7 @@ export const InquirySection: React.FC<InquirySectionProps> = ({
                       placeholder="usman@company.com"
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 focus:border-indigo-500 text-white placeholder:text-slate-500 text-xs sm:text-sm outline-none transition-colors"
+                      className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 focus:border-yellow-400 text-white placeholder:text-slate-500 text-xs sm:text-sm outline-none transition-colors"
                     />
                   </div>
 
@@ -332,7 +398,7 @@ export const InquirySection: React.FC<InquirySectionProps> = ({
                       placeholder="+92 332 6032893"
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 focus:border-indigo-500 text-white placeholder:text-slate-500 text-xs sm:text-sm outline-none transition-colors"
+                      className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 focus:border-yellow-400 text-white placeholder:text-slate-500 text-xs sm:text-sm outline-none transition-colors"
                     />
                   </div>
                 </div>
@@ -352,14 +418,14 @@ export const InquirySection: React.FC<InquirySectionProps> = ({
                           onClick={() => handleToggleService(srv)}
                           className={`p-2.5 rounded-xl border text-xs cursor-pointer flex items-center justify-between transition-all ${
                             selected
-                              ? 'bg-indigo-950/40 border-indigo-500/60 text-white font-bold'
+                              ? 'bg-red-950/40 border-yellow-500/60 text-white font-bold'
                               : 'bg-slate-800/50 border-slate-700/60 text-slate-300 hover:border-slate-600'
                           }`}
                         >
                           <span>{srv}</span>
                           <span
                             className={`w-4 h-4 rounded flex items-center justify-center text-[10px] border ${
-                              selected ? 'bg-indigo-500 border-indigo-400 text-white' : 'border-slate-600'
+                              selected ? 'bg-gradient-to-r from-red-600 to-amber-500 border-yellow-400 text-white font-bold' : 'border-slate-600'
                             }`}
                           >
                             {selected && '✓'}
@@ -426,7 +492,7 @@ export const InquirySection: React.FC<InquirySectionProps> = ({
                     placeholder="Briefly describe your business, what challenges you are facing, and what specific deliverables you are looking for..."
                     value={formData.projectBrief}
                     onChange={(e) => setFormData({ ...formData, projectBrief: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 focus:border-indigo-500 text-white placeholder:text-slate-500 text-xs sm:text-sm outline-none transition-colors"
+                    className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 focus:border-yellow-400 text-white placeholder:text-slate-500 text-xs sm:text-sm outline-none transition-colors"
                   />
                 </div>
 
@@ -434,7 +500,7 @@ export const InquirySection: React.FC<InquirySectionProps> = ({
                 <div className="pt-2 flex flex-col sm:flex-row items-center gap-3">
                   <button
                     type="submit"
-                    className="w-full sm:flex-1 py-4 rounded-xl bg-gradient-to-r from-sky-500 via-indigo-600 to-purple-600 hover:from-sky-400 hover:to-purple-500 text-white font-extrabold text-sm shadow-xl shadow-indigo-600/30 transition-all cursor-pointer flex items-center justify-center gap-2"
+                    className="w-full sm:flex-1 py-4 rounded-xl bg-gradient-to-r from-red-600 via-rose-600 to-amber-500 hover:from-red-500 hover:to-amber-400 text-white font-extrabold text-sm shadow-xl shadow-red-600/30 transition-all cursor-pointer flex items-center justify-center gap-2"
                   >
                     <Send className="w-4 h-4" />
                     <span>Send Project Inquiry</span>

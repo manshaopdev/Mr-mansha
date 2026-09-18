@@ -10,7 +10,8 @@ import {
   TrendingUp,
   Calculator,
   Briefcase,
-  ChevronDown
+  ChevronDown,
+  ShieldCheck
 } from 'lucide-react';
 import { Currency } from '../types/agency';
 import { AGENCY_INFO } from '../data/agencyData';
@@ -18,15 +19,19 @@ import { AGENCY_INFO } from '../data/agencyData';
 interface NavbarProps {
   currency: Currency;
   onToggleCurrency: () => void;
+  onSetCurrency?: (c: Currency) => void;
   onOpenInquiry: (initialService?: string) => void;
   onScrollTo: (elementId: string) => void;
+  onOpenPortal: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
   currency,
   onToggleCurrency,
+  onSetCurrency,
   onOpenInquiry,
   onScrollTo,
+  onOpenPortal,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [servicesDropdownOpen, setServicesDropdownOpen] = useState(false);
@@ -72,15 +77,32 @@ export const Navbar: React.FC<NavbarProps> = ({
               <span>WhatsApp: {AGENCY_INFO.contacts.whatsappFormatted}</span>
             </button>
             <span className="text-slate-600">|</span>
-            {/* Currency Switcher */}
-            <button
-              onClick={onToggleCurrency}
-              className="flex items-center gap-1 px-2 py-0.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-500/30 transition-colors cursor-pointer font-bold"
-              title="Toggle Currency (PKR / USD)"
-            >
-              <span>Currency:</span>
-              <span className="underline">{currency === 'PKR' ? 'PKR (₨)' : 'USD ($)'}</span>
-            </button>
+            {/* Segmented Currency Switcher */}
+            <div className="flex items-center gap-1 bg-slate-900/90 border border-slate-700/80 p-0.5 rounded-lg">
+              <span className="text-[10px] text-slate-400 px-1 font-semibold hidden md:inline">Currency:</span>
+              <button
+                onClick={() => (onSetCurrency ? onSetCurrency('PKR') : onToggleCurrency())}
+                className={`px-2 py-0.5 rounded text-[11px] font-bold transition-all cursor-pointer ${
+                  currency === 'PKR'
+                    ? 'bg-emerald-500 text-slate-950 shadow-sm shadow-emerald-500/30'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+                title="View prices in Pakistani Rupees (PKR ₨)"
+              >
+                PKR (₨)
+              </button>
+              <button
+                onClick={() => (onSetCurrency ? onSetCurrency('USD') : onToggleCurrency())}
+                className={`px-2 py-0.5 rounded text-[11px] font-bold transition-all cursor-pointer ${
+                  currency === 'USD'
+                    ? 'bg-indigo-500 text-white shadow-sm shadow-indigo-500/30'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+                title="View prices in US Dollars (USD $)"
+              >
+                USD ($)
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -93,9 +115,9 @@ export const Navbar: React.FC<NavbarProps> = ({
             onClick={() => handleNavClick('hero')}
             className="flex items-center gap-3 cursor-pointer group"
           >
-            <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-indigo-600 via-sky-500 to-indigo-400 p-[1.5px] shadow-[0_0_20px_rgba(99,102,241,0.35)] group-hover:shadow-[0_0_25px_rgba(99,102,241,0.6)] transition-all">
-              <div className="w-full h-full bg-[#090D16] rounded-2xl flex items-center justify-center">
-                <span className="font-black text-xl bg-gradient-to-r from-sky-400 via-indigo-300 to-amber-300 bg-clip-text text-transparent">
+            <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-red-600 via-amber-500 to-yellow-400 p-[1.5px] shadow-[0_0_20px_rgba(239,68,68,0.4)] group-hover:shadow-[0_0_25px_rgba(234,179,8,0.6)] transition-all">
+              <div className="w-full h-full bg-[#08090D] rounded-2xl flex items-center justify-center">
+                <span className="font-black text-xl bg-gradient-to-r from-yellow-300 via-amber-400 to-red-500 bg-clip-text text-transparent">
                   P+
                 </span>
               </div>
@@ -105,15 +127,15 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <span className="font-extrabold text-xl tracking-tight text-white font-['Outfit',sans-serif]">
                   PRIME PLUS
                 </span>
-                <span className="text-xs px-2 py-0.5 rounded-md bg-indigo-500/20 text-indigo-300 font-bold border border-indigo-500/30">
+                <span className="text-xs px-2 py-0.5 rounded-md bg-red-500/20 text-yellow-300 font-bold border border-red-500/30">
                   TEAM
                 </span>
               </div>
               <p className="text-[11px] text-slate-400 tracking-wide font-medium flex items-center gap-1">
                 <span>Design</span>
-                <span className="text-indigo-400">•</span>
+                <span className="text-yellow-400">•</span>
                 <span>Web Dev</span>
-                <span className="text-indigo-400">•</span>
+                <span className="text-yellow-400">•</span>
                 <span>Marketing</span>
               </p>
             </div>
@@ -132,7 +154,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 className="flex items-center gap-1.5 hover:text-white transition-colors cursor-pointer py-2"
               >
                 <span>Services</span>
-                <ChevronDown className={`w-4 h-4 transition-transform ${servicesDropdownOpen ? 'rotate-180 text-sky-400' : ''}`} />
+                <ChevronDown className={`w-4 h-4 transition-transform ${servicesDropdownOpen ? 'rotate-180 text-yellow-400' : ''}`} />
               </button>
 
               {servicesDropdownOpen && (
@@ -141,11 +163,11 @@ export const Navbar: React.FC<NavbarProps> = ({
                     onClick={() => handleNavClick('service-graphic-design')}
                     className="p-3 rounded-xl hover:bg-slate-800/80 transition-colors cursor-pointer flex items-start gap-3 group"
                   >
-                    <div className="p-2 rounded-lg bg-pink-500/20 text-pink-400 group-hover:bg-pink-500/30">
+                    <div className="p-2 rounded-lg bg-red-500/20 text-red-400 group-hover:bg-red-500/30">
                       <Palette className="w-5 h-5" />
                     </div>
                     <div>
-                      <div className="font-semibold text-white group-hover:text-pink-300 flex items-center gap-1.5">
+                      <div className="font-semibold text-white group-hover:text-red-300 flex items-center gap-1.5">
                         <span>Graphic Designing</span>
                       </div>
                       <p className="text-xs text-slate-400 mt-0.5">
@@ -158,11 +180,11 @@ export const Navbar: React.FC<NavbarProps> = ({
                     onClick={() => handleNavClick('service-web-development')}
                     className="p-3 rounded-xl hover:bg-slate-800/80 transition-colors cursor-pointer flex items-start gap-3 group"
                   >
-                    <div className="p-2 rounded-lg bg-sky-500/20 text-sky-400 group-hover:bg-sky-500/30">
+                    <div className="p-2 rounded-lg bg-yellow-500/20 text-yellow-400 group-hover:bg-yellow-500/30">
                       <Code2 className="w-5 h-5" />
                     </div>
                     <div>
-                      <div className="font-semibold text-white group-hover:text-sky-300 flex items-center gap-1.5">
+                      <div className="font-semibold text-white group-hover:text-yellow-300 flex items-center gap-1.5">
                         <span>Web Development</span>
                       </div>
                       <p className="text-xs text-slate-400 mt-0.5">
@@ -202,7 +224,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               onClick={() => handleNavClick('cost-estimator')}
               className="hover:text-white transition-colors cursor-pointer flex items-center gap-1.5"
             >
-              <Calculator className="w-4 h-4 text-sky-400" />
+              <Calculator className="w-4 h-4 text-yellow-400" />
               <span>Cost Estimator</span>
             </button>
 
@@ -229,7 +251,17 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
 
           {/* Action CTAs */}
-          <div className="hidden sm:flex items-center gap-3">
+          <div className="hidden sm:flex items-center gap-2.5">
+            <button
+              onClick={onOpenPortal}
+              className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700/80 border border-slate-700 text-slate-200 hover:text-white transition-all cursor-pointer flex items-center gap-2 text-xs font-mono font-semibold"
+              title="Open Prime Plus Client Portal & Track Progress"
+            >
+              <ShieldCheck className="w-4 h-4 text-yellow-400" />
+              <span>Client Portal</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+            </button>
+
             <button
               onClick={openWhatsApp}
               className="p-2.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 transition-colors cursor-pointer flex items-center gap-2 text-xs font-semibold"
@@ -241,21 +273,33 @@ export const Navbar: React.FC<NavbarProps> = ({
 
             <button
               onClick={() => onOpenInquiry()}
-              className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-sky-500 via-indigo-500 to-purple-600 hover:from-sky-400 hover:to-purple-500 text-white font-bold text-sm shadow-[0_0_20px_rgba(99,102,241,0.4)] transition-all cursor-pointer flex items-center gap-2"
+              className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-red-600 via-rose-600 to-amber-500 hover:from-red-500 hover:to-amber-400 text-white font-extrabold text-xs sm:text-sm shadow-[0_0_20px_rgba(239,68,68,0.45)] transition-all cursor-pointer flex items-center gap-2"
             >
-              <Sparkles className="w-4 h-4" />
+              <Sparkles className="w-4 h-4 text-yellow-300" />
               <span>Get Free Quote</span>
             </button>
           </div>
 
           {/* Mobile Menu Toggle */}
           <div className="flex lg:hidden items-center gap-2">
-            <button
-              onClick={onToggleCurrency}
-              className="px-2 py-1 text-xs rounded-lg bg-slate-800 text-amber-300 border border-amber-500/30 font-bold"
-            >
-              {currency}
-            </button>
+            <div className="flex items-center bg-slate-800/90 border border-slate-700 p-0.5 rounded-lg text-xs font-mono">
+              <button
+                onClick={() => (onSetCurrency ? onSetCurrency('PKR') : onToggleCurrency())}
+                className={`px-2 py-0.5 rounded text-[11px] font-bold transition-all ${
+                  currency === 'PKR' ? 'bg-emerald-500 text-slate-950 font-black' : 'text-slate-400'
+                }`}
+              >
+                PKR
+              </button>
+              <button
+                onClick={() => (onSetCurrency ? onSetCurrency('USD') : onToggleCurrency())}
+                className={`px-2 py-0.5 rounded text-[11px] font-bold transition-all ${
+                  currency === 'USD' ? 'bg-indigo-500 text-white font-black' : 'text-slate-400'
+                }`}
+              >
+                USD
+              </button>
+            </div>
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="p-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white transition-colors cursor-pointer"
@@ -276,9 +320,9 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
             <button
               onClick={() => handleNavClick('service-graphic-design')}
-              className="flex items-center gap-3 p-3 rounded-xl bg-slate-800/80 text-left text-pink-300 font-semibold"
+              className="flex items-center gap-3 p-3 rounded-xl bg-slate-800/80 text-left text-red-300 font-semibold"
             >
-              <Palette className="w-5 h-5 text-pink-400" />
+              <Palette className="w-5 h-5 text-red-400" />
               <div>
                 <div>Graphic & Brand Designing</div>
                 <div className="text-[11px] text-slate-400 font-normal">Logos, UI/UX, Packaging, Social Media</div>
@@ -287,9 +331,9 @@ export const Navbar: React.FC<NavbarProps> = ({
 
             <button
               onClick={() => handleNavClick('service-web-development')}
-              className="flex items-center gap-3 p-3 rounded-xl bg-slate-800/80 text-left text-sky-300 font-semibold"
+              className="flex items-center gap-3 p-3 rounded-xl bg-slate-800/80 text-left text-yellow-300 font-semibold"
             >
-              <Code2 className="w-5 h-5 text-sky-400" />
+              <Code2 className="w-5 h-5 text-yellow-400" />
               <div>
                 <div>Web & Full-Stack Development</div>
                 <div className="text-[11px] text-slate-400 font-normal">React, Next.js, Node, E-Commerce</div>
@@ -317,7 +361,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
             <button
               onClick={() => handleNavClick('cost-estimator')}
-              className="text-left py-2 px-3 rounded-lg hover:bg-slate-800 text-sky-400 font-bold flex items-center justify-between"
+              className="text-left py-2 px-3 rounded-lg hover:bg-slate-800 text-yellow-400 font-bold flex items-center justify-between"
             >
               <span>Interactive Cost Estimator</span>
               <Calculator className="w-4 h-4" />
@@ -344,6 +388,16 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           <div className="pt-2 flex flex-col gap-2">
             <button
+              onClick={() => {
+                setMobileMenuOpen(false);
+                onOpenPortal();
+              }}
+              className="w-full py-3 rounded-xl bg-slate-800 text-yellow-300 border border-slate-700 font-bold flex items-center justify-center gap-2"
+            >
+              <ShieldCheck className="w-4 h-4 text-red-400" />
+              <span>Client Portal & Project Tracker</span>
+            </button>
+            <button
               onClick={openWhatsApp}
               className="w-full py-3 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold flex items-center justify-center gap-2"
             >
@@ -355,9 +409,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                 setMobileMenuOpen(false);
                 onOpenInquiry();
               }}
-              className="w-full py-3 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-600 text-white font-bold flex items-center justify-center gap-2 shadow-lg"
+              className="w-full py-3 rounded-xl bg-gradient-to-r from-red-600 via-rose-600 to-amber-500 text-white font-extrabold flex items-center justify-center gap-2 shadow-lg shadow-red-600/30"
             >
-              <Sparkles className="w-4 h-4" />
+              <Sparkles className="w-4 h-4 text-yellow-300" />
               <span>Request Project Proposal</span>
             </button>
           </div>

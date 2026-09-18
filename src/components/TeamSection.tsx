@@ -12,7 +12,7 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ onOpenInquiry }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/10 border border-sky-500/30 text-sky-400 text-xs font-mono">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/10 border border-red-500/30 text-yellow-400 text-xs font-mono">
             <Users className="w-3.5 h-3.5" />
             <span>THE MINDS BEHIND PRIME PLUS TEAM</span>
           </div>
@@ -29,11 +29,11 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ onOpenInquiry }) => {
           {TEAM_MEMBERS.map((member) => (
             <div
               key={member.id}
-              className="p-6 rounded-3xl bg-slate-900 border border-slate-800 hover:border-slate-700 transition-all flex flex-col justify-between space-y-4 text-left shadow-lg group"
+              className="p-6 rounded-3xl bg-slate-900 border border-slate-800 hover:border-yellow-500/40 transition-all flex flex-col justify-between space-y-4 text-left shadow-lg group"
             >
               <div className="space-y-4">
                 {/* Avatar with gradient ring */}
-                <div className="relative w-20 h-20 rounded-2xl overflow-hidden border-2 border-indigo-500/40 group-hover:border-indigo-400 transition-colors shadow-md">
+                <div className="relative w-20 h-20 rounded-2xl overflow-hidden border-2 border-red-500/50 group-hover:border-yellow-400 transition-colors shadow-md">
                   <img
                     src={member.avatar}
                     alt={member.name}
@@ -46,11 +46,11 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ onOpenInquiry }) => {
                   <h3 className="text-lg font-bold text-white font-['Outfit',sans-serif]">
                     {member.name}
                   </h3>
-                  <div className="text-xs font-semibold text-indigo-400 font-mono">
+                  <div className="text-xs font-semibold text-yellow-400 font-mono">
                     {member.role}
                   </div>
-                  <div className="text-[11px] text-slate-400 font-sans mt-0.5">
-                    {member.roleUrdu}
+                  <div className="text-[11px] text-slate-400 font-mono mt-0.5">
+                    {member.specialtyHighlight}
                   </div>
                   <span className="inline-block mt-1 text-[10px] font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">
                     {member.experience}

@@ -37,7 +37,7 @@ export const ServiceDetailSection: React.FC<ServiceDetailSectionProps> = ({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-xs font-mono">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/10 border border-red-500/30 text-yellow-400 text-xs font-mono">
             <Layers className="w-3.5 h-3.5" />
             <span>FULL AGENCY SCOPE & DEEP DIVES</span>
           </div>
@@ -64,13 +64,13 @@ export const ServiceDetailSection: React.FC<ServiceDetailSectionProps> = ({
                     : 'bg-slate-900/80 border-slate-800 text-slate-400 hover:text-slate-200 hover:bg-slate-800'
                 }`}
               >
-                {service.id === 'graphic-design' && <Palette className={`w-5 h-5 ${isSelected ? 'text-pink-400' : 'text-slate-500'}`} />}
-                {service.id === 'web-development' && <Code2 className={`w-5 h-5 ${isSelected ? 'text-sky-400' : 'text-slate-500'}`} />}
+                {service.id === 'graphic-design' && <Palette className={`w-5 h-5 ${isSelected ? 'text-red-400' : 'text-slate-500'}`} />}
+                {service.id === 'web-development' && <Code2 className={`w-5 h-5 ${isSelected ? 'text-yellow-400' : 'text-slate-500'}`} />}
                 {service.id === 'digital-marketing' && <TrendingUp className={`w-5 h-5 ${isSelected ? 'text-amber-400' : 'text-slate-500'}`} />}
 
                 <div className="text-left">
                   <div className="leading-tight">{service.title}</div>
-                  <div className="text-[11px] font-normal text-slate-400 font-sans">{service.titleUrdu}</div>
+                  <div className="text-[11px] font-normal text-slate-400 font-sans">{service.categorySubtitle}</div>
                 </div>
               </button>
             );
@@ -169,8 +169,8 @@ export const ServiceDetailSection: React.FC<ServiceDetailSectionProps> = ({
                       <h5 className="font-bold text-white text-base group-hover:text-slate-100">
                         {sub.title}
                       </h5>
-                      <div className="text-xs text-slate-400 font-sans mt-0.5">
-                        {sub.titleUrdu}
+                      <div className="text-xs text-yellow-300/80 font-mono mt-0.5">
+                        {sub.subtitle}
                       </div>
                     </div>
 
@@ -213,7 +213,7 @@ export const ServiceDetailSection: React.FC<ServiceDetailSectionProps> = ({
           {/* Industry Software & Toolstack */}
           <div className="p-6 rounded-2xl bg-slate-800/40 border border-slate-800 space-y-4">
             <div className="flex items-center gap-2 text-white font-bold font-['Outfit',sans-serif]">
-              <Wrench className="w-5 h-5 text-indigo-400" />
+              <Wrench className="w-5 h-5 text-yellow-400" />
               <span>Standard Production Toolchains & Technologies</span>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
@@ -236,7 +236,7 @@ export const ServiceDetailSection: React.FC<ServiceDetailSectionProps> = ({
           {/* 5-Step Process Timeline */}
           <div className="space-y-4">
             <h4 className="text-lg sm:text-xl font-bold text-white font-['Outfit',sans-serif] flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-amber-400" />
+              <Sparkles className="w-5 h-5 text-yellow-400" />
               <span>Step-by-Step Delivery Process for {activeService.title}</span>
             </h4>
             <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
@@ -269,7 +269,7 @@ export const ServiceDetailSection: React.FC<ServiceDetailSectionProps> = ({
           {/* Frequently Asked Questions */}
           <div className="space-y-4 pt-4 border-t border-slate-800/80">
             <h4 className="text-base sm:text-lg font-bold text-white font-['Outfit',sans-serif] flex items-center gap-2">
-              <HelpCircle className="w-4 h-4 text-sky-400" />
+              <HelpCircle className="w-4 h-4 text-red-400" />
               <span>Frequently Asked Questions regarding {activeService.title}</span>
             </h4>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

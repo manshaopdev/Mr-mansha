@@ -41,12 +41,12 @@ export const AgencyMouseAnimation: React.FC = () => {
   const nextRippleId = useRef(0);
   const [coords, setCoords] = useState({ x: -100, y: -100 });
 
-  // Neon color palette matching Prime Plus: Indigo, Cyan/Sky, Amber/Gold
+  // Neon color palette: Flame Red, Radiant Yellow, Golden Amber, Crimson
   const colors = [
-    '99, 102, 241',  // Indigo
-    '56, 189, 248',  // Sky cyan
-    '245, 158, 11',  // Amber gold
-    '168, 85, 247',  // Violet
+    '239, 68, 68',   // Bright Flame Red
+    '234, 179, 8',   // Radiant Yellow
+    '245, 158, 11',  // Amber Gold
+    '220, 38, 38',   // Deep Crimson Red
   ];
 
   useEffect(() => {
@@ -252,7 +252,7 @@ export const AgencyMouseAnimation: React.FC = () => {
         <div
           className="fixed inset-0 pointer-events-none z-10 transition-opacity duration-300"
           style={{
-            background: `radial-gradient(600px circle at ${coords.x}px ${coords.y}px, rgba(99, 102, 241, 0.08), rgba(56, 189, 248, 0.03) 40%, transparent 80%)`,
+            background: `radial-gradient(600px circle at ${coords.x}px ${coords.y}px, rgba(239, 68, 68, 0.12), rgba(234, 179, 8, 0.05) 40%, transparent 80%)`,
           }}
         />
       )}
@@ -279,27 +279,27 @@ export const AgencyMouseAnimation: React.FC = () => {
           <div
             className={`rounded-full transition-all duration-200 border flex items-center justify-center ${
               isClicking
-                ? 'w-6 h-6 border-amber-400 bg-amber-400/20 scale-90 shadow-[0_0_15px_rgba(245,158,11,0.8)]'
+                ? 'w-6 h-6 border-yellow-400 bg-yellow-400/25 scale-90 shadow-[0_0_18px_rgba(234,179,8,0.9)]'
                 : isHovered
-                ? 'w-14 h-14 border-sky-400/80 bg-sky-400/10 shadow-[0_0_20px_rgba(56,189,248,0.5)]'
-                : 'w-8 h-8 border-indigo-500/60 bg-indigo-500/5 shadow-[0_0_12px_rgba(99,102,241,0.35)]'
+                ? 'w-14 h-14 border-red-500/90 bg-red-500/10 shadow-[0_0_22px_rgba(239,68,68,0.6)]'
+                : 'w-8 h-8 border-yellow-500/60 bg-yellow-500/5 shadow-[0_0_14px_rgba(234,179,8,0.4)]'
             }`}
           >
             {/* Center core pip */}
             <div
               className={`rounded-full transition-all duration-150 ${
                 isClicking
-                  ? 'w-1.5 h-1.5 bg-amber-300'
+                  ? 'w-1.5 h-1.5 bg-yellow-200'
                   : isHovered
-                  ? 'w-2 h-2 bg-sky-300 scale-125'
-                  : 'w-1 h-1 bg-indigo-300'
+                  ? 'w-2 h-2 bg-yellow-300 scale-125'
+                  : 'w-1 h-1 bg-red-500'
               }`}
             />
           </div>
 
           {/* Interactive hover tooltip indicator */}
           {isHovered && hoverLabel && (
-            <div className="absolute top-8 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-md bg-slate-950/90 border border-sky-500/40 text-[10px] font-mono text-sky-300 whitespace-nowrap backdrop-blur-md shadow-lg pointer-events-none">
+            <div className="absolute top-8 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-md bg-slate-950/95 border border-yellow-500/50 text-[10px] font-mono text-yellow-300 whitespace-nowrap backdrop-blur-md shadow-lg pointer-events-none">
               {hoverLabel}
             </div>
           )}

@@ -14,12 +14,14 @@ import { PRICING_PACKAGES, AGENCY_INFO } from '../data/agencyData';
 interface PackagesProps {
   currency: Currency;
   onToggleCurrency: () => void;
+  onSetCurrency?: (c: Currency) => void;
   onSelectPackage: (pkg: PackageOption) => void;
 }
 
 export const Packages: React.FC<PackagesProps> = ({
   currency,
   onToggleCurrency,
+  onSetCurrency,
   onSelectPackage,
 }) => {
   const [filterCategory, setFilterCategory] = useState<string>('all');
@@ -40,7 +42,7 @@ export const Packages: React.FC<PackagesProps> = ({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-mono">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/10 border border-red-500/30 text-yellow-400 text-xs font-mono">
             <Tag className="w-3.5 h-3.5" />
             <span>TRANSPARENT VALUE-BASED PRICING</span>
           </div>
@@ -53,13 +55,29 @@ export const Packages: React.FC<PackagesProps> = ({
 
           {/* Currency Toggle Ribbon */}
           <div className="flex items-center justify-center gap-3 pt-2">
-            <span className="text-xs text-slate-400 font-mono">Currency:</span>
-            <button
-              onClick={onToggleCurrency}
-              className="px-3.5 py-1.5 rounded-xl bg-slate-900 border border-amber-500/40 text-amber-300 text-xs font-mono font-bold hover:bg-slate-800 transition-colors cursor-pointer"
-            >
-              Viewing in <span className="underline">{currency === 'PKR' ? 'Pakistani Rupee (₨)' : 'US Dollar ($)'}</span> (Click to Switch)
-            </button>
+            <span className="text-xs text-slate-400 font-mono">Select Currency:</span>
+            <div className="inline-flex items-center bg-slate-900 border border-slate-700/80 p-1 rounded-xl shadow-inner">
+              <button
+                onClick={() => (onSetCurrency ? onSetCurrency('PKR') : onToggleCurrency())}
+                className={`px-4 py-1.5 rounded-lg text-xs font-mono font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                  currency === 'PKR'
+                    ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/20'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                <span>Pakistani Rupee (PKR ₨)</span>
+              </button>
+              <button
+                onClick={() => (onSetCurrency ? onSetCurrency('USD') : onToggleCurrency())}
+                className={`px-4 py-1.5 rounded-lg text-xs font-mono font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                  currency === 'USD'
+                    ? 'bg-red-600 text-white shadow-md shadow-red-600/20'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                <span>US Dollar (USD $)</span>
+              </button>
+            </div>
           </div>
 
           {/* Category Filter */}
@@ -75,7 +93,7 @@ export const Packages: React.FC<PackagesProps> = ({
                 onClick={() => setFilterCategory(cat.id)}
                 className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-colors cursor-pointer ${
                   filterCategory === cat.id
-                    ? 'bg-indigo-600 text-white'
+                    ? 'bg-gradient-to-r from-red-600 to-rose-600 text-white shadow-md shadow-red-600/30'
                     : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
                 }`}
               >
@@ -94,22 +112,22 @@ export const Packages: React.FC<PackagesProps> = ({
                 key={pkg.id}
                 className={`p-6 sm:p-8 rounded-3xl transition-all flex flex-col justify-between space-y-6 relative ${
                   isAllInOne
-                    ? 'bg-gradient-to-b from-indigo-950/80 via-slate-900 to-slate-900 border-2 border-indigo-500/60 shadow-[0_0_40px_rgba(99,102,241,0.25)] lg:scale-105'
+                    ? 'bg-gradient-to-b from-red-950/60 via-slate-900 to-slate-900 border-2 border-yellow-500/70 shadow-[0_0_40px_rgba(234,179,8,0.25)] lg:scale-105'
                     : pkg.popular
-                    ? 'bg-slate-900 border-2 border-sky-500/50 shadow-xl'
-                    : 'bg-slate-900/80 border border-slate-800'
+                    ? 'bg-slate-900 border-2 border-red-500/60 shadow-xl shadow-red-950/30'
+                    : 'bg-slate-900/80 border border-slate-800 hover:border-yellow-500/30'
                 }`}
               >
                 {/* Popular / Featured Badge */}
                 {(pkg.popular || isAllInOne) && (
-                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 text-slate-950 font-black text-[11px] uppercase tracking-wider shadow-md">
+                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gradient-to-r from-yellow-400 via-amber-400 to-red-500 text-slate-950 font-black text-[11px] uppercase tracking-wider shadow-md">
                     {isAllInOne ? '⭐ Best Value / Full Agency Bundle' : 'Most Popular'}
                   </div>
                 )}
 
                 <div className="space-y-4">
                   <div>
-                    <span className="text-[11px] font-mono uppercase text-indigo-400 font-bold">
+                    <span className="text-[11px] font-mono uppercase text-yellow-400 font-bold">
                       {pkg.idealFor}
                     </span>
                     <h3 className="text-2xl font-black text-white mt-1 font-['Outfit',sans-serif]">
@@ -157,10 +175,10 @@ export const Packages: React.FC<PackagesProps> = ({
                     onClick={() => onSelectPackage(pkg)}
                     className={`w-full py-3.5 rounded-xl font-bold text-sm transition-all cursor-pointer flex items-center justify-center gap-2 ${
                       isAllInOne
-                        ? 'bg-gradient-to-r from-amber-400 to-orange-500 text-slate-950 shadow-lg hover:brightness-110'
+                        ? 'bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 hover:from-yellow-300 hover:to-amber-400 text-slate-950 font-black shadow-lg shadow-yellow-500/25'
                         : pkg.popular
-                        ? 'bg-sky-500 hover:bg-sky-400 text-white shadow-lg'
-                        : 'bg-slate-800 hover:bg-slate-700 text-slate-100'
+                        ? 'bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-bold shadow-lg shadow-red-600/25'
+                        : 'bg-slate-800 hover:bg-slate-700 hover:text-yellow-300 text-slate-100'
                     }`}
                   >
                     <span>Choose {pkg.name}</span>

@@ -4,7 +4,8 @@ import {
   PackageOption,
   Testimonial,
   TeamMember,
-  EstimatorItem
+  EstimatorItem,
+  ClientProject
 } from '../types/agency';
 
 export const AGENCY_INFO = {
@@ -33,16 +34,16 @@ export const SERVICES_DATA: ServiceDetail[] = [
   {
     id: 'graphic-design',
     title: 'Graphic & Visual Brand Designing',
-    titleUrdu: 'گرافک اور برانڈ ڈیزائننگ',
+    categorySubtitle: 'Visual Identity, UI/UX & Brand Systems',
     tagline: 'Distinctive visual identities that command attention, build trust, and win customers.',
     heroPitch: 'Great design is not just aesthetics—it is psychological architecture. Our creative studio crafts cohesive brand narratives, high-impact marketing visuals, tactile packaging, and intuitive digital interfaces designed to elevate your company above competitors.',
     badge: 'Creative Studio',
     themeColor: {
-      primary: 'from-pink-500 to-rose-500',
-      border: 'border-pink-500/30',
-      bg: 'bg-pink-500/10',
-      glow: 'shadow-[0_0_30px_rgba(244,63,94,0.15)]',
-      text: 'text-pink-400',
+      primary: 'from-red-600 to-rose-600',
+      border: 'border-red-500/40',
+      bg: 'bg-red-500/10',
+      glow: 'shadow-[0_0_30px_rgba(239,68,68,0.25)]',
+      text: 'text-red-400',
     },
     keyHighlights: [
       '100% Vector & High-Res Source Deliverables (AI, EPS, SVG, Figma, PDF)',
@@ -55,7 +56,7 @@ export const SERVICES_DATA: ServiceDetail[] = [
       {
         id: 'brand-identity',
         title: 'Brand Identity & Logo Architecture',
-        titleUrdu: 'برانڈ آئیڈینٹیٹی اور لوگو ڈیزائن',
+        subtitle: 'Logo Systems & Brand Guidelines',
         shortDesc: 'Iconic logos, comprehensive brand guideline manuals, color palettes, and typography pairings.',
         fullDesc: 'We develop memorable corporate identities from root strategy to final vector assets. Includes primary & secondary logo variations, responsive marks for app icons/favicons, bespoke color palettes with contrast testing, typography hierarchies, and an exhaustive 30+ page Brand Identity Manual for internal and external consistency.',
         deliverables: [
@@ -73,7 +74,7 @@ export const SERVICES_DATA: ServiceDetail[] = [
       {
         id: 'ui-ux-design',
         title: 'UI/UX & Interactive Product Design',
-        titleUrdu: 'یو آئی / یو ایکس ڈیزائن (ویب اور موبائل)',
+        subtitle: 'Mobile & Web Interface Architecture',
         shortDesc: 'Intuitive user experiences, clickable Figma prototypes, and modular design systems.',
         fullDesc: 'From mobile applications (iOS/Android) to enterprise SaaS dashboards and customer portals, our UI/UX engineers construct seamless user journeys. We start with user persona research and low-fidelity wireframes, progressing into high-fidelity design systems with auto-layout components, WCAG AA accessible contrast, and clickable micro-interaction prototypes ready for developer handoff.',
         deliverables: [
@@ -90,7 +91,7 @@ export const SERVICES_DATA: ServiceDetail[] = [
       {
         id: 'social-media-creatives',
         title: 'Social Media & Ad Creative Packs',
-        titleUrdu: 'سوشل میڈیا پوسٹس اور اشتہارات کے ڈیزائن',
+        subtitle: 'High-CTR Ad Creatives & Social Assets',
         shortDesc: 'High-converting static banners, carousels, reels templates, and promotional display ads.',
         fullDesc: 'Stand out in high-speed social feeds. We craft attention-grabbing visual assets engineered for click-through rate (CTR). Perfect for Instagram grid curation, Facebook carousels, LinkedIn thought-leadership infographics, YouTube high-CTR thumbnails, and display ad banners formatted across all standard aspect ratios (1:1, 9:16, 16:9).',
         deliverables: [
@@ -107,7 +108,7 @@ export const SERVICES_DATA: ServiceDetail[] = [
       {
         id: 'packaging-print',
         title: 'Packaging, Merchandise & Print Media',
-        titleUrdu: 'پیکیجنگ اور پرنٹ میڈیا ڈیزائن',
+        subtitle: '3D Product Packaging & Print Kits',
         shortDesc: 'Retail-ready product boxes, bottle labels, pouches, roll-up banners, and corporate brochures.',
         fullDesc: 'Tangible brand presence requires precision die-lines, bleed margins, and material finish understanding (foil stamping, spot UV, matte embossing). We build production-ready packaging artwork that stands out on retail shelves and unboxing videos, complete with 3D mockups for pitch decks and e-commerce listings.',
         deliverables: [
@@ -124,7 +125,7 @@ export const SERVICES_DATA: ServiceDetail[] = [
       {
         id: 'motion-3d',
         title: 'Motion Graphics & 3D Visuals',
-        titleUrdu: 'موشن گرافکس اور تھری ڈی ویژولز',
+        subtitle: 'Dynamic Motion Design & 3D Renderings',
         shortDesc: 'Animated logo stings, 2D explainer animations, product 3D renders, and web Lottie files.',
         fullDesc: 'Bring static graphics to dynamic life. We produce smooth logo animation reveals, 2D vector explainer videos, web-optimized JSON/Lottie animations for ultra-fast site loading, and photorealistic 3D product modeling with cinematic lighting.',
         deliverables: [
@@ -171,16 +172,16 @@ export const SERVICES_DATA: ServiceDetail[] = [
   {
     id: 'web-development',
     title: 'Modern Web & Full-Stack Development',
-    titleUrdu: 'جدید ویب اور فل اسٹیک ڈویلپمنٹ',
+    categorySubtitle: 'Full-Stack Web Apps, Headless Stores & Cloud Portals',
     tagline: 'Lightning-fast, highly secure, scalable web platforms engineered for maximum conversion.',
     heroPitch: 'Your website is your 24/7 sales engine. Prime Plus Team builds enterprise-grade, clean-coded web solutions utilizing modern frameworks like React, Next.js, TypeScript, Node.js, and headless CMS architecture. We focus on 100/100 Core Web Vitals, bulletproof cybersecurity, and fluid mobile responsiveness.',
     badge: 'Engineering Lab',
     themeColor: {
-      primary: 'from-sky-500 to-indigo-600',
-      border: 'border-sky-500/30',
-      bg: 'bg-sky-500/10',
-      glow: 'shadow-[0_0_30px_rgba(14,165,233,0.15)]',
-      text: 'text-sky-400',
+      primary: 'from-amber-500 to-yellow-500',
+      border: 'border-yellow-500/40',
+      bg: 'bg-yellow-500/10',
+      glow: 'shadow-[0_0_30px_rgba(234,179,8,0.25)]',
+      text: 'text-yellow-400',
     },
     keyHighlights: [
       'Sub-Second Page Loads & 95+ Google Lighthouse Scores',
@@ -193,7 +194,7 @@ export const SERVICES_DATA: ServiceDetail[] = [
       {
         id: 'custom-web-apps',
         title: 'Custom Web Applications & SaaS Platforms',
-        titleUrdu: 'کسٹم ویب ایپس اور ساس (SaaS) پورٹلز',
+        subtitle: 'Enterprise SaaS & Cloud Web Platforms',
         shortDesc: 'Bespoke dashboards, customer portals, membership platforms, and complex database apps.',
         fullDesc: 'When off-the-shelf templates cannot fulfill your business logic, our engineering team architects bespoke full-stack applications. Featuring responsive React/Next.js frontends, resilient Node.js/Express backends, relational (PostgreSQL) or document (MongoDB) databases, role-based access control (RBAC), and enterprise-grade data security.',
         deliverables: [
@@ -210,7 +211,7 @@ export const SERVICES_DATA: ServiceDetail[] = [
       {
         id: 'ecommerce-stores',
         title: 'High-Converting E-Commerce Solutions',
-        titleUrdu: 'ای کامرس ویب سائٹس (Shopify & Custom)',
+        subtitle: 'High-Conversion Online Stores & Shopify Plus',
         shortDesc: 'Custom Shopify themes, WooCommerce stores, and high-speed headless storefronts.',
         fullDesc: 'Engineered specifically for maximum Average Order Value (AOV) and minimal checkout drop-offs. We implement one-click upsells, live inventory tracking, abandoned cart recovery scripts, smart search filtering, and seamless multi-channel payment gateway setups (Stripe, PayPal, Cash on Delivery, JazzCash, EasyPaisa).',
         deliverables: [
@@ -227,7 +228,7 @@ export const SERVICES_DATA: ServiceDetail[] = [
       {
         id: 'corporate-websites',
         title: 'Corporate & Lead Generation Websites',
-        titleUrdu: 'کارپوریٹ اور بزنس ویب سائٹس',
+        subtitle: 'High-Speed Modern Corporate Web Portals',
         shortDesc: 'Professional corporate presence with dynamic CMS, interactive calculators, and lead capture.',
         fullDesc: 'Elevate your enterprise with an authoritative digital flagship. We combine striking visual aesthetics with rapid loading times, integrated appointment booking, interactive ROI calculators, client case study carousels, and seamless headless CMS (WordPress, Sanity, Strapi) so non-technical staff can publish blog posts and updates effortlessly.',
         deliverables: [
@@ -244,7 +245,7 @@ export const SERVICES_DATA: ServiceDetail[] = [
       {
         id: 'api-integrations',
         title: 'API Engineering & Backend Architecture',
-        titleUrdu: 'اے پی آئی ڈیولپمنٹ اور سسٹم انٹیگریشنز',
+        subtitle: 'Scalable REST/GraphQL APIs & Integrations',
         shortDesc: 'RESTful/GraphQL APIs, third-party webhook integrations, and database optimization.',
         fullDesc: 'Connect your business tools into a unified nervous system. We design secure RESTful and GraphQL APIs, integrate third-party webhooks (WhatsApp Cloud API, CRM sync, ERP logistics, payment processors), and optimize complex database queries for sub-100ms response times under high concurrency.',
         deliverables: [
@@ -260,7 +261,7 @@ export const SERVICES_DATA: ServiceDetail[] = [
       {
         id: 'maintenance-speed',
         title: 'Speed Optimization & Security Hardening',
-        titleUrdu: 'ویب سائٹ اسپیڈ اور سیکیورٹی اپ گریڈ',
+        subtitle: 'Core Web Vitals 95+ & Hardened Security',
         shortDesc: 'Core Web Vitals tuning, malware removal, SSL encryption, and 99.9% uptime maintenance.',
         fullDesc: 'Slow sites lose customers and rank poorly on Google. We diagnose performance bottlenecks, compress assets into modern WebP/AVIF formats, implement server-side edge caching, eliminate render-blocking scripts, and install SSL, firewall, and DDoS mitigation.',
         deliverables: [
@@ -308,16 +309,16 @@ export const SERVICES_DATA: ServiceDetail[] = [
   {
     id: 'digital-marketing',
     title: 'Data-Driven Digital Marketing & Growth',
-    titleUrdu: 'ڈیٹا ڈریون ڈیجیٹل مارکیٹنگ اور گروتھ',
+    categorySubtitle: 'Performance Marketing, Paid Ads & Organic SEO',
     tagline: 'High-ROI performance campaigns, search dominance, and predictable customer acquisition.',
     heroPitch: 'Having a great product is only half the battle—the world needs to discover it. Prime Plus Team builds precision marketing funnels that turn strangers into loyal paying clients. Utilizing advanced Meta Ads (FB & IG), Google Search/Shopping PPC, Technical SEO, and automated retargeting, we focus relentlessly on ROAS (Return on Ad Spend) and scalable business revenue.',
     badge: 'Growth Engine',
     themeColor: {
-      primary: 'from-amber-500 to-orange-500',
-      border: 'border-amber-500/30',
+      primary: 'from-red-600 to-amber-500',
+      border: 'border-amber-500/40',
       bg: 'bg-amber-500/10',
-      glow: 'shadow-[0_0_30px_rgba(245,158,11,0.15)]',
-      text: 'text-amber-400',
+      glow: 'shadow-[0_0_30px_rgba(245,158,11,0.25)]',
+      text: 'text-amber-300',
     },
     keyHighlights: [
       'Proven Multi-Million Dollar Ad Spend Management with 3.8x - 5.5x ROAS',
@@ -330,7 +331,7 @@ export const SERVICES_DATA: ServiceDetail[] = [
       {
         id: 'meta-ads',
         title: 'Meta Ads (Facebook & Instagram Advertising)',
-        titleUrdu: 'فیس بک اور انسٹاگرام پیڈ اشتہارات',
+        subtitle: 'Meta Ads Manager & Conversions API (CAPI)',
         shortDesc: 'Hyper-targeted lead generation and e-commerce sales funnels with high return on ad spend.',
         fullDesc: 'Stop wasting budget on broad boosting. We engineer multi-tier ad funnels: Top of Funnel (cold audience awareness with hook-driven video and carousel creatives), Middle of Funnel (engagers & product viewers), and Bottom of Funnel (dynamic product retargeting & abandoned cart incentives). Includes Meta Conversions API (CAPI) setup for 100% accurate post-iOS 14 tracking.',
         deliverables: [
@@ -347,7 +348,7 @@ export const SERVICES_DATA: ServiceDetail[] = [
       {
         id: 'google-ads-ppc',
         title: 'Google Ads & Performance Max (PPC)',
-        titleUrdu: 'گوگل اشتہارات اور سرچ مارکیٹنگ (PPC)',
+        subtitle: 'Search, Shopping & Performance Max Campaigns',
         shortDesc: 'Capture high-intent buyers searching directly for your products and services.',
         fullDesc: 'When users search on Google, they are ready to purchase. We build high-converting Search Campaigns with high Quality Scores (lowering your cost-per-click), Google Merchant Center Shopping feeds, Performance Max (PMax) multi-channel campaigns, and YouTube pre-roll video ads.',
         deliverables: [
@@ -364,7 +365,7 @@ export const SERVICES_DATA: ServiceDetail[] = [
       {
         id: 'seo-organic',
         title: 'Search Engine Optimization (SEO)',
-        titleUrdu: 'سرچ انجن آپٹیمائزیشن (آرگینک رینکنگ)',
+        subtitle: 'Technical SEO, Backlinks & High Ranking',
         shortDesc: 'Rank on Page 1 of Google for competitive keywords to gain free, compounding traffic.',
         fullDesc: 'SEO is the highest-margin acquisition channel in digital business. We execute an end-to-end strategy: Technical SEO (crawlability, sitemaps, canonical tags, schema markup), On-Page SEO (keyword-optimized titles, headers, internal linking, entity optimization), and Off-Page SEO (editorial backlink acquisition and digital PR).',
         deliverables: [
@@ -381,7 +382,7 @@ export const SERVICES_DATA: ServiceDetail[] = [
       {
         id: 'social-media-management',
         title: 'Full Social Media Management (SMM)',
-        titleUrdu: 'مکمل سوشل میڈیا مینجمنٹ اور گروتھ',
+        subtitle: 'Content Calendar, Community & Growth Strategy',
         shortDesc: 'Consistent visual storytelling, engaging copywriting, community management, and brand authority.',
         fullDesc: 'Turn your social channels into active client communities. We plan, design, write, schedule, and monitor your brand profiles across Instagram, LinkedIn, Facebook, and TikTok. Featuring a structured 30-day content calendar, engaging captions with research-backed hashtags, and active follower engagement.',
         deliverables: [
@@ -398,7 +399,7 @@ export const SERVICES_DATA: ServiceDetail[] = [
       {
         id: 'cro-email-marketing',
         title: 'Conversion Optimization & Email Automation',
-        titleUrdu: 'کنورژن آپٹیمائزیشن اور ای میل فنلز',
+        subtitle: 'A/B Split Testing & High-Converting Funnels',
         shortDesc: 'Automated email sequences, abandoned cart triggers, and landing page split-testing.',
         fullDesc: 'Traffic without conversion is wasted money. We analyze heatmaps to remove checkout friction and install automated email flows: Welcome Series, Abandoned Cart Reminders, Post-Purchase Cross-Sells, and Customer Win-Back campaigns that routinely add 15% - 30% to monthly revenue on autopilot.',
         deliverables: [
@@ -709,7 +710,7 @@ export const TEAM_MEMBERS: TeamMember[] = [
     id: 'tm-1',
     name: 'Muhammad Farhan',
     role: 'Principal Creative Director',
-    roleUrdu: 'پرنسپل کریٹیو ڈائریکٹر',
+    specialtyHighlight: 'Brand Identity Systems & Visual Direction',
     experience: '8+ Years Experience',
     specialties: ['Brand Identity Systems', 'Typography Architecture', '3D Packaging', 'Figma Systems'],
     bio: 'Oversees visual design and creative strategy for all Prime Plus client projects. Specializes in luxury branding and conversion-driven UI/UX design systems.',
@@ -719,7 +720,7 @@ export const TEAM_MEMBERS: TeamMember[] = [
     id: 'tm-2',
     name: 'Ali Raza Khan',
     role: 'Lead Full-Stack Architect',
-    roleUrdu: 'لیڈ فل اسٹیک آرکیٹیکٹ',
+    specialtyHighlight: 'Cloud Architecture, Next.js & Database Systems',
     experience: '9+ Years Experience',
     specialties: ['React 19 & Next.js', 'Node.js & TypeScript', 'PostgreSQL & Docker', 'Cloud Architecture'],
     bio: 'Heads web engineering and technical infrastructure. Obsessed with sub-second page performance, microservice scalability, and clean modular code.',
@@ -729,7 +730,7 @@ export const TEAM_MEMBERS: TeamMember[] = [
     id: 'tm-3',
     name: 'Ayesha Noor',
     role: 'Director of Performance Marketing',
-    roleUrdu: 'ڈائریکٹر پرفارمنس مارکیٹنگ',
+    specialtyHighlight: 'Meta & Google Ads Algorithm Mastery & CRO',
     experience: '7+ Years Experience',
     specialties: ['Meta CAPI & Pixel Setup', 'Google Ads PMax', 'Attribution & GA4', 'Klaviyo Funnels'],
     bio: 'Has managed over $4M in cumulative digital ad spend across e-commerce, healthcare, and B2B SaaS, consistently generating 3.5x to 5.5x verified return on ad spend.',
@@ -739,10 +740,129 @@ export const TEAM_MEMBERS: TeamMember[] = [
     id: 'tm-4',
     name: 'Bilal Ahmed',
     role: 'Senior UI/UX & Motion Designer',
-    roleUrdu: 'سینئر یو آئی / یو ایکس ڈیزائنر',
+    specialtyHighlight: 'Figma Design Tokens & 3D Kinetic Motion',
     experience: '6+ Years Experience',
     specialties: ['Figma Prototyping', 'User Research & Wireframing', 'After Effects', 'Design Systems'],
     bio: 'Crafts frictionless human-centered digital experiences and kinetic motion graphics that bring brand narratives to life across web and mobile platforms.',
     avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=300&auto=format&fit=crop&q=80'
+  }
+];
+
+export const SAMPLE_CLIENT_PROJECTS: ClientProject[] = [
+  {
+    id: 'PPT-2024-8841',
+    clientName: 'Tariq Mansoor',
+    clientCompany: 'Artisan Luxe Footwear',
+    clientEmail: 'tariq@artisanluxe.com',
+    clientPhone: '+92 332 6032893',
+    projectTitle: 'Complete E-Commerce Rebrand & Shopify Plus Store',
+    category: 'All-in-One Suite',
+    currentPhase: 'QA & Staging',
+    progressPercent: 85,
+    startDate: 'October 12, 2024',
+    targetLaunch: 'November 28, 2024',
+    leadArchitect: {
+      name: 'Ali Raza Khan',
+      role: 'Lead Full-Stack Architect',
+      phone: '+92 332 6032893',
+    },
+    stagingUrl: 'https://staging-artisanluxe.primeplusdemo.com',
+    milestones: [
+      { step: '01', title: 'Strategic Discovery & Brand Brief', status: 'completed', date: 'Oct 14', description: 'Audience persona research, competitor audit, and deliverable timeline approved.' },
+      { step: '02', title: 'Luxury Logo & Brand Guidelines', status: 'completed', date: 'Oct 25', description: '30-page brand guide, vector logo assets, and custom packaging die-lines delivered.' },
+      { step: '03', title: 'Custom Shopify Theme Development', status: 'completed', date: 'Nov 10', description: 'Liquid template coding, payment gateways, and 1-page checkout integrated.' },
+      { step: '04', title: 'Staging QA & Speed Optimization', status: 'in-progress', date: 'Nov 20', description: 'Mobile viewport testing, 96+ Lighthouse score tuning, and inventory sync.' },
+      { step: '05', title: 'Public Domain Launch & Handover', status: 'pending', date: 'Nov 28', description: 'DNS propagation, staff training call, and final source code transfer.' }
+    ],
+    deliverables: [
+      { name: 'Brand Identity Vector Package', category: 'Graphic Design', format: 'AI / SVG / EPS', status: 'ready', downloadLabel: 'Download Brand Assets (42MB)' },
+      { name: 'Product Packaging Die-Cut Artwork', category: 'Graphic Design', format: 'PDF / 300DPI', status: 'ready', downloadLabel: 'Download Print Artwork (18MB)' },
+      { name: 'Shopify Plus Staging Storefront', category: 'Web Development', format: 'Live Staging Link', status: 'ready', url: 'https://artisanluxe-staging.web.app' },
+      { name: 'Meta CAPI & Pixel Tracking Script', category: 'Digital Marketing', format: 'Script & Tag Manager', status: 'ready' },
+      { name: 'Source Code Repository', category: 'Web Development', format: 'GitHub Private Repo', status: 'working' }
+    ],
+    financials: {
+      totalPkr: 285000,
+      totalUsd: 1450,
+      status: 'Deposit Cleared (50%)',
+      invoiceNumber: 'INV-PPT-8841'
+    },
+    recentUpdate: 'Staging checkout testing completed with zero errors. Final inventory upload in progress. Scheduled launch on November 28.'
+  },
+  {
+    id: 'PPT-2024-9102',
+    clientName: 'Sarah Jenkins',
+    clientCompany: 'ApexFlow HealthTech',
+    clientEmail: 's.jenkins@apexflow.io',
+    clientPhone: '+1 (415) 890-4412',
+    projectTitle: 'SaaS Patient Intake Web App & Design System',
+    category: 'Web Development',
+    currentPhase: 'Development Sprint',
+    progressPercent: 60,
+    startDate: 'November 02, 2024',
+    targetLaunch: 'December 15, 2024',
+    leadArchitect: {
+      name: 'Muhammad Farhan',
+      role: 'Principal Creative Director',
+      phone: '+92 332 6032893',
+    },
+    stagingUrl: 'https://apexflow-app.primeplusdemo.com',
+    milestones: [
+      { step: '01', title: 'HIPAA UX Architecture & Wireframing', status: 'completed', date: 'Nov 06', description: 'Figma wireframes with accessible typography and secure intake flow.' },
+      { step: '02', title: 'Component Library & Design Tokens', status: 'completed', date: 'Nov 15', description: 'React Tailwind component library with dark/light mode tokens.' },
+      { step: '03', title: 'Next.js Frontend & API Integration', status: 'in-progress', date: 'Dec 01', description: 'PostgreSQL database schemas and encrypted REST endpoints.' },
+      { step: '04', title: 'Security Audit & Penetration Testing', status: 'pending', date: 'Dec 08', description: 'OWASP vulnerability check, rate limiting, and role permissions.' },
+      { step: '05', title: 'AWS Cloud Production Deployment', status: 'pending', date: 'Dec 15', description: 'SSL, Docker orchestration, and client admin training.' }
+    ],
+    deliverables: [
+      { name: 'Figma Master Prototype File', category: 'UI/UX Design', format: 'Figma Community Link', status: 'ready' },
+      { name: 'API Schema & Swagger Documentation', category: 'Web Development', format: 'JSON / Markdown', status: 'ready' },
+      { name: 'Next.js Frontend Build', category: 'Web Development', format: 'Vercel Staging', status: 'working' }
+    ],
+    financials: {
+      totalPkr: 420000,
+      totalUsd: 2200,
+      status: 'Deposit Cleared (50%)',
+      invoiceNumber: 'INV-PPT-9102'
+    },
+    recentUpdate: 'Sprint 2 completed on time. Intake forms with real-time validation are currently being linked to the secure API.'
+  },
+  {
+    id: 'PPT-2024-6530',
+    clientName: 'Khurram Shehzad',
+    clientCompany: 'Velocity Apparel Global',
+    clientEmail: 'khurram@velocityapparel.pk',
+    clientPhone: '+92 332 6032893',
+    projectTitle: 'Meta & Google Ads Omnichannel Scaling Campaign',
+    category: 'Digital Marketing',
+    currentPhase: 'Live & Handover',
+    progressPercent: 100,
+    startDate: 'September 01, 2024',
+    targetLaunch: 'October 15, 2024',
+    leadArchitect: {
+      name: 'Ayesha Noor',
+      role: 'Director of Performance Marketing',
+      phone: '+92 332 6032893',
+    },
+    stagingUrl: 'https://lookerstudio.google.com/reporting/velocity-live-roas',
+    milestones: [
+      { step: '01', title: 'Pixel & CAPI Server-Side Tracking', status: 'completed', date: 'Sep 04', description: 'Installed Meta Conversions API with 9.8/10 Event Quality Match score.' },
+      { step: '02', title: 'High-CTR Ad Creatives & Video Hooks', status: 'completed', date: 'Sep 12', description: 'Created 24 static and dynamic UGC video variations.' },
+      { step: '03', title: 'Campaign Launch & Scaling Sprint', status: 'completed', date: 'Sep 25', description: 'Achieved 4.8x ROAS within the first 14 days of budget scaling.' },
+      { step: '04', title: 'Google Shopping & Search Optimization', status: 'completed', date: 'Oct 05', description: 'Reduced Cost Per Acquisition (CPA) by 38% across PMax campaigns.' },
+      { step: '05', title: 'Live Looker Studio Dashboard Handover', status: 'completed', date: 'Oct 15', description: 'Real-time sales, ROAS, and customer LTV tracking dashboard delivered.' }
+    ],
+    deliverables: [
+      { name: 'Ad Creative Pack (24 Assets)', category: 'Graphic Design', format: 'PNG / MP4 / PSD', status: 'ready', downloadLabel: 'Download Ad Creatives' },
+      { name: 'Live Looker Studio Dashboard', category: 'Digital Marketing', format: 'Google Cloud Link', status: 'ready', url: 'https://lookerstudio.google.com' },
+      { name: 'Monthly Attribution Audit PDF', category: 'Digital Marketing', format: 'PDF Report', status: 'ready' }
+    ],
+    financials: {
+      totalPkr: 195000,
+      totalUsd: 950,
+      status: 'Paid in Full',
+      invoiceNumber: 'INV-PPT-6530'
+    },
+    recentUpdate: 'Campaign operating at 4.8x ROAS. Ongoing monthly retainer active with dedicated WhatsApp group support.'
   }
 ];

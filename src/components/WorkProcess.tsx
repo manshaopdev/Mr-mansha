@@ -15,37 +15,37 @@ export const WorkProcess: React.FC = () => {
     {
       num: '01',
       title: 'Strategic Discovery & Blueprint',
-      titleUrdu: 'اسٹریٹجک ریسرچ اور جامع منصوبہ بندی',
+      subtitle: 'Market Research & Scope Architecture',
       desc: 'We map out your business objectives, target audience demographics, competitive landscape, and define the exact scope matrix and key performance metrics.',
       icon: Compass,
-      accent: 'border-sky-500/40 text-sky-400 bg-sky-500/10',
+      accent: 'border-yellow-500/40 text-yellow-400 bg-yellow-500/10',
       guarantee: 'Detailed Scope Document & Deliverable Timeline'
     },
     {
       num: '02',
       title: 'Creative Prototyping & System Design',
-      titleUrdu: 'پروٹوٹائپنگ اور ویژول ڈیزائن سسٹم',
+      subtitle: 'High-Fidelity Wireframes & Brand Kits',
       desc: 'For design: moodboards and vector concepts. For web: Figma component libraries and database schemas. For marketing: audience personas, tracking pixels, and hook angles.',
       icon: Layers,
-      accent: 'border-pink-500/40 text-pink-400 bg-pink-500/10',
+      accent: 'border-red-500/40 text-red-400 bg-red-500/10',
       guarantee: 'Interactive Clickable Prototype & Asset Previews'
     },
     {
       num: '03',
       title: 'High-Velocity Agile Execution',
-      titleUrdu: 'ایڈوانس ڈویلپمنٹ اور پروڈکشن',
+      subtitle: 'Modern Full-Stack Code & Ad Scaling',
       desc: 'Our senior specialists code the application in TypeScript/React/Next.js, craft print-ready vector files, and build Meta/Google ad campaigns with Conversions API tracking.',
       icon: Code2,
-      accent: 'border-indigo-500/40 text-indigo-400 bg-indigo-500/10',
+      accent: 'border-yellow-400/40 text-yellow-300 bg-yellow-400/10',
       guarantee: 'Weekly Sprint Reviews & Direct WhatsApp Group'
     },
     {
       num: '04',
       title: 'Rigorous QA & High-Conversion Launch',
-      titleUrdu: 'کوالٹی ٹیسٹنگ، اسپیڈ اور کامیاب لانچ',
+      subtitle: 'Speed Audit, Security & Live Handover',
       desc: 'Cross-browser compatibility testing, 100/100 Core Web Vitals audit, security verification, and controlled ad rollouts backed by comprehensive warranty.',
       icon: Rocket,
-      accent: 'border-amber-500/40 text-amber-400 bg-amber-500/10',
+      accent: 'border-red-600/40 text-red-400 bg-red-600/10',
       guarantee: '30-90 Days Post-Launch Warranty & Support'
     }
   ];
@@ -54,7 +54,7 @@ export const WorkProcess: React.FC = () => {
     <section id="process-flow" className="py-16 sm:py-24 border-t border-slate-800/80 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         <div className="text-center max-w-3xl mx-auto space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-xs font-mono">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/10 border border-red-500/30 text-yellow-400 text-xs font-mono">
             <Clock className="w-3.5 h-3.5" />
             <span>HOW WE OPERATE</span>
           </div>
@@ -72,7 +72,7 @@ export const WorkProcess: React.FC = () => {
             return (
               <div
                 key={idx}
-                className="p-6 rounded-3xl bg-slate-900/90 border border-slate-800 hover:border-slate-700 transition-all flex flex-col justify-between space-y-6 shadow-xl relative"
+                className="p-6 rounded-3xl bg-slate-900/90 border border-slate-800 hover:border-yellow-500/40 transition-all flex flex-col justify-between space-y-6 shadow-xl relative"
               >
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
@@ -88,8 +88,8 @@ export const WorkProcess: React.FC = () => {
                     <h3 className="text-lg font-bold text-white font-['Outfit',sans-serif]">
                       {s.title}
                     </h3>
-                    <div className="text-xs text-slate-400 font-sans mt-0.5">
-                      {s.titleUrdu}
+                    <div className="text-xs text-yellow-400/90 font-mono mt-0.5 font-medium">
+                      {s.subtitle}
                     </div>
                   </div>
 
@@ -108,7 +108,7 @@ export const WorkProcess: React.FC = () => {
         </div>
 
         {/* Accountability Banner */}
-        <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-slate-900 via-indigo-950/40 to-slate-900 border border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-6 text-left">
+        <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-slate-900 via-red-950/40 to-slate-900 border border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-6 text-left">
           <div className="space-y-1">
             <h4 className="text-base sm:text-lg font-bold text-white font-['Outfit',sans-serif] flex items-center gap-2">
               <ShieldCheck className="w-5 h-5 text-emerald-400" />
@@ -120,7 +120,7 @@ export const WorkProcess: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-3 shrink-0">
-            <div className="px-4 py-2 rounded-xl bg-slate-800 text-indigo-300 font-mono text-xs font-bold border border-slate-700">
+            <div className="px-4 py-2 rounded-xl bg-slate-800 text-yellow-300 font-mono text-xs font-bold border border-yellow-500/30">
               Dedicated Slack / WhatsApp Channel
             </div>
           </div>

@@ -18,12 +18,14 @@ import { ESTIMATOR_OPTIONS, AGENCY_INFO } from '../data/agencyData';
 interface InteractiveEstimatorProps {
   currency: Currency;
   onToggleCurrency: () => void;
+  onSetCurrency?: (c: Currency) => void;
   onSendEstimateToInquiry: (selectedItems: string[], totalCost: number, currency: Currency) => void;
 }
 
 export const InteractiveEstimator: React.FC<InteractiveEstimatorProps> = ({
   currency,
   onToggleCurrency,
+  onSetCurrency,
   onSendEstimateToInquiry,
 }) => {
   const [selectedIds, setSelectedIds] = useState<string[]>([
@@ -69,7 +71,7 @@ export const InteractiveEstimator: React.FC<InteractiveEstimatorProps> = ({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/10 border border-sky-500/30 text-sky-400 text-xs font-mono">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/10 border border-red-500/30 text-yellow-400 text-xs font-mono">
             <Calculator className="w-3.5 h-3.5" />
             <span>TRANSPARENT PROJECT BUDGETING</span>
           </div>
@@ -81,13 +83,29 @@ export const InteractiveEstimator: React.FC<InteractiveEstimatorProps> = ({
           </p>
 
           <div className="pt-2 flex items-center justify-center gap-3">
-            <span className="text-xs text-slate-400">Display Currency:</span>
-            <button
-              onClick={onToggleCurrency}
-              className="px-3 py-1 rounded-xl bg-slate-900 border border-amber-500/40 text-amber-300 font-mono text-xs font-bold hover:bg-slate-800 transition-colors cursor-pointer"
-            >
-              Switch to {currency === 'PKR' ? 'USD ($)' : 'PKR (₨)'}
-            </button>
+            <span className="text-xs text-slate-400 font-mono">Select Currency:</span>
+            <div className="inline-flex items-center bg-slate-900 border border-slate-700/80 p-1 rounded-xl shadow-inner">
+              <button
+                onClick={() => (onSetCurrency ? onSetCurrency('PKR') : onToggleCurrency())}
+                className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                  currency === 'PKR'
+                    ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/20'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                <span>Pakistani Rupee (PKR ₨)</span>
+              </button>
+              <button
+                onClick={() => (onSetCurrency ? onSetCurrency('USD') : onToggleCurrency())}
+                className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                  currency === 'USD'
+                    ? 'bg-red-600 text-white shadow-md shadow-red-600/20'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                <span>US Dollar (USD $)</span>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -97,7 +115,7 @@ export const InteractiveEstimator: React.FC<InteractiveEstimatorProps> = ({
           <div className="lg:col-span-2 space-y-6">
             {/* Graphic Design Category */}
             <div className="p-6 rounded-3xl bg-slate-900/80 border border-slate-800 space-y-4">
-              <div className="flex items-center gap-2 text-pink-400 font-bold font-['Outfit',sans-serif] text-base sm:text-lg">
+              <div className="flex items-center gap-2 text-red-400 font-bold font-['Outfit',sans-serif] text-base sm:text-lg">
                 <Palette className="w-5 h-5" />
                 <span>Graphic & Brand Design Modules</span>
               </div>
@@ -110,7 +128,7 @@ export const InteractiveEstimator: React.FC<InteractiveEstimatorProps> = ({
                       onClick={() => toggleItem(item.id)}
                       className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-start justify-between gap-3 text-left ${
                         active
-                          ? 'bg-pink-950/30 border-pink-500/50 shadow-md shadow-pink-500/10'
+                          ? 'bg-red-950/35 border-red-500/60 shadow-md shadow-red-500/15'
                           : 'bg-slate-850 bg-slate-900/50 border-slate-800 hover:border-slate-700'
                       }`}
                     >
@@ -121,14 +139,14 @@ export const InteractiveEstimator: React.FC<InteractiveEstimatorProps> = ({
                         <div className="text-[11px] font-mono text-slate-400">
                           Est: ~{item.days} days
                         </div>
-                        <div className="text-xs font-black text-pink-400 font-mono">
+                        <div className="text-xs font-black text-red-400 font-mono">
                           {formatPrice(currency === 'PKR' ? item.basePKR : item.baseUSD)}
                         </div>
                       </div>
                       <div
                         className={`w-5 h-5 rounded-lg flex items-center justify-center shrink-0 border ${
                           active
-                            ? 'bg-pink-500 border-pink-400 text-white'
+                            ? 'bg-red-600 border-red-400 text-white'
                             : 'border-slate-700 bg-slate-900'
                         }`}
                       >
@@ -142,7 +160,7 @@ export const InteractiveEstimator: React.FC<InteractiveEstimatorProps> = ({
 
             {/* Web Development Category */}
             <div className="p-6 rounded-3xl bg-slate-900/80 border border-slate-800 space-y-4">
-              <div className="flex items-center gap-2 text-sky-400 font-bold font-['Outfit',sans-serif] text-base sm:text-lg">
+              <div className="flex items-center gap-2 text-yellow-400 font-bold font-['Outfit',sans-serif] text-base sm:text-lg">
                 <Code2 className="w-5 h-5" />
                 <span>Web & Full-Stack Development Modules</span>
               </div>
@@ -155,7 +173,7 @@ export const InteractiveEstimator: React.FC<InteractiveEstimatorProps> = ({
                       onClick={() => toggleItem(item.id)}
                       className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-start justify-between gap-3 text-left ${
                         active
-                          ? 'bg-sky-950/30 border-sky-500/50 shadow-md shadow-sky-500/10'
+                          ? 'bg-yellow-950/35 border-yellow-500/60 shadow-md shadow-yellow-500/15'
                           : 'bg-slate-850 bg-slate-900/50 border-slate-800 hover:border-slate-700'
                       }`}
                     >
@@ -166,14 +184,14 @@ export const InteractiveEstimator: React.FC<InteractiveEstimatorProps> = ({
                         <div className="text-[11px] font-mono text-slate-400">
                           Est: ~{item.days} days
                         </div>
-                        <div className="text-xs font-black text-sky-400 font-mono">
+                        <div className="text-xs font-black text-yellow-400 font-mono">
                           {formatPrice(currency === 'PKR' ? item.basePKR : item.baseUSD)}
                         </div>
                       </div>
                       <div
                         className={`w-5 h-5 rounded-lg flex items-center justify-center shrink-0 border ${
                           active
-                            ? 'bg-sky-500 border-sky-400 text-white'
+                            ? 'bg-yellow-500 border-yellow-400 text-slate-950 font-black'
                             : 'border-slate-700 bg-slate-900'
                         }`}
                       >
@@ -274,7 +292,7 @@ export const InteractiveEstimator: React.FC<InteractiveEstimatorProps> = ({
               {/* Timeline Gauge */}
               <div className="p-4 rounded-2xl bg-slate-800/70 border border-slate-700/60 flex items-center justify-between">
                 <div className="flex items-center gap-2 text-xs text-slate-300">
-                  <Calendar className="w-4 h-4 text-sky-400" />
+                  <Calendar className="w-4 h-4 text-yellow-400" />
                   <span>Estimated Delivery:</span>
                 </div>
                 <div className="font-mono font-bold text-white text-sm">
@@ -283,8 +301,8 @@ export const InteractiveEstimator: React.FC<InteractiveEstimatorProps> = ({
               </div>
 
               {/* Total Estimated Cost */}
-              <div className="p-5 rounded-2xl bg-gradient-to-br from-indigo-950/90 to-slate-900 border border-indigo-500/40 space-y-1">
-                <div className="text-xs font-mono text-indigo-300 uppercase">
+              <div className="p-5 rounded-2xl bg-gradient-to-br from-red-950/80 via-slate-900 to-amber-950/40 border border-yellow-500/50 space-y-1 shadow-lg shadow-red-950/30">
+                <div className="text-xs font-mono text-yellow-400 uppercase font-bold">
                   Total Estimated Investment:
                 </div>
                 <div className="text-3xl sm:text-4xl font-black text-white font-['Outfit',sans-serif] tracking-tight">
@@ -306,9 +324,9 @@ export const InteractiveEstimator: React.FC<InteractiveEstimatorProps> = ({
                       currency
                     )
                   }
-                  className="w-full py-3.5 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-bold text-sm shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer flex items-center justify-center gap-2"
+                  className="w-full py-3.5 rounded-xl bg-gradient-to-r from-red-600 via-rose-600 to-amber-500 hover:from-red-500 hover:to-amber-400 text-white font-extrabold text-sm shadow-xl shadow-red-600/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer flex items-center justify-center gap-2"
                 >
-                  <Sparkles className="w-4 h-4" />
+                  <Sparkles className="w-4 h-4 text-yellow-300" />
                   <span>Lock in this Estimate</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>

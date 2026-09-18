@@ -9,17 +9,24 @@ import { WorkProcess } from './components/WorkProcess';
 import { Packages } from './components/Packages';
 import { TeamSection } from './components/TeamSection';
 import { Testimonials } from './components/Testimonials';
+import { ClientHandlingGuarantees } from './components/ClientHandlingGuarantees';
+import { ClientPortalModal } from './components/ClientPortalModal';
 import { InquirySection } from './components/InquirySection';
 import { Footer } from './components/Footer';
 import { AgencyMouseAnimation } from './components/AgencyMouseAnimation';
 
-import { Currency, SubService, ServiceDetail, PackageOption } from './types/agency';
-import { SERVICES_DATA } from './data/agencyData';
+import { Currency, SubService, ServiceDetail, PackageOption, ClientProject } from './types/agency';
+import { SERVICES_DATA, SAMPLE_CLIENT_PROJECTS } from './data/agencyData';
 
 export function App() {
   const [currency, setCurrency] = useState<Currency>('PKR');
   const [activeServiceId, setActiveServiceId] = useState<string>('graphic-design');
   
+  // Client Management & Projects State
+  const [clientProjects, setClientProjects] = useState<ClientProject[]>(SAMPLE_CLIENT_PROJECTS);
+  const [isPortalOpen, setIsPortalOpen] = useState(false);
+  const [portalSelectedId, setPortalSelectedId] = useState<string | undefined>(undefined);
+
   // Modal for deep-dive sub-service view
   const [activeSubServiceModal, setActiveSubServiceModal] = useState<{
     sub: SubService;
@@ -38,6 +45,18 @@ export function App() {
     if (el) {
       el.scrollIntoView({ behavior: 'smooth' });
     }
+  };
+
+  const handleOpenPortal = (projectId?: string) => {
+    if (projectId) {
+      setPortalSelectedId(projectId);
+    }
+    setIsPortalOpen(true);
+  };
+
+  const handleClientCreated = (newProject: ClientProject) => {
+    setClientProjects((prev) => [newProject, ...prev]);
+    setPortalSelectedId(newProject.id);
   };
 
   const handleSelectServiceTab = (serviceId: string) => {
@@ -68,13 +87,15 @@ export function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#090D16] text-slate-100 selection:bg-indigo-500/30 selection:text-indigo-200 antialiased font-['Plus_Jakarta_Sans',sans-serif]">
+    <div className="min-h-screen bg-[#090A0F] text-slate-100 selection:bg-red-500/40 selection:text-yellow-200 antialiased font-['Plus_Jakarta_Sans',sans-serif]">
       {/* Primary Sticky Header */}
       <Navbar
         currency={currency}
         onToggleCurrency={toggleCurrency}
+        onSetCurrency={(c) => setCurrency(c)}
         onOpenInquiry={handleOpenInquiryWithService}
         onScrollTo={scrollToSection}
+        onOpenPortal={() => handleOpenPortal()}
       />
 
       {/* Main Content Sections */}
@@ -87,7 +108,7 @@ export function App() {
           onSelectServiceTab={handleSelectServiceTab}
         />
 
-        {/* Core Comprehensive Service Breakdowns (Har Detail for Graphic Design, Web Dev, Digital Marketing) */}
+        {/* Core Comprehensive Service Breakdowns (Every Detail for Graphic Design, Web Dev, Digital Marketing) */}
         <ServiceDetailSection
           activeServiceId={activeServiceId}
           onChangeActiveService={(id) => setActiveServiceId(id)}
@@ -101,6 +122,7 @@ export function App() {
         <InteractiveEstimator
           currency={currency}
           onToggleCurrency={toggleCurrency}
+          onSetCurrency={(c) => setCurrency(c)}
           onSendEstimateToInquiry={handleSendEstimateToInquiry}
         />
 
@@ -114,6 +136,7 @@ export function App() {
         <Packages
           currency={currency}
           onToggleCurrency={toggleCurrency}
+          onSetCurrency={(c) => setCurrency(c)}
           onSelectPackage={handleSelectPackage}
         />
 
@@ -123,10 +146,18 @@ export function App() {
         {/* Verified Client Testimonials */}
         <Testimonials />
 
+        {/* Client Handling Framework & SLA Guarantees */}
+        <ClientHandlingGuarantees
+          onOpenPortal={() => handleOpenPortal()}
+          onOpenInquiry={() => scrollToSection('contact-inquiry')}
+        />
+
         {/* Project Inquiry & Direct WhatsApp / Email Booking */}
         <InquirySection
           currency={currency}
           initialService={inquiryInitialService}
+          onClientCreated={handleClientCreated}
+          onOpenPortal={(id) => handleOpenPortal(id)}
         />
       </main>
 
@@ -148,6 +179,19 @@ export function App() {
           onInquire={handleOpenInquiryWithService}
         />
       )}
+
+      {/* Interactive Client Handling & Tracking Portal */}
+      <ClientPortalModal
+        isOpen={isPortalOpen}
+        onClose={() => setIsPortalOpen(false)}
+        projects={clientProjects}
+        initialProjectId={portalSelectedId}
+        currency={currency}
+        onOpenInquiry={() => {
+          setIsPortalOpen(false);
+          scrollToSection('contact-inquiry');
+        }}
+      />
     </div>
   );
 }

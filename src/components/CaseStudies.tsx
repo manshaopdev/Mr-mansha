@@ -38,7 +38,7 @@ export const CaseStudies: React.FC<CaseStudiesProps> = ({ onOpenInquiry }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/30 text-purple-400 text-xs font-mono">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/10 border border-red-500/30 text-yellow-400 text-xs font-mono">
             <Briefcase className="w-3.5 h-3.5" />
             <span>PROVEN TRACK RECORD & RESULTS</span>
           </div>
@@ -55,7 +55,7 @@ export const CaseStudies: React.FC<CaseStudiesProps> = ({ onOpenInquiry }) => {
               onClick={() => setFilter('all')}
               className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                 filter === 'all'
-                  ? 'bg-white text-slate-950 shadow-md'
+                  ? 'bg-gradient-to-r from-red-600 to-rose-600 text-white shadow-md shadow-red-600/30'
                   : 'bg-slate-900 border border-slate-800 text-slate-400 hover:text-white'
               }`}
             >
@@ -65,7 +65,7 @@ export const CaseStudies: React.FC<CaseStudiesProps> = ({ onOpenInquiry }) => {
               onClick={() => setFilter('graphic-design')}
               className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
                 filter === 'graphic-design'
-                  ? 'bg-pink-500 text-white shadow-md'
+                  ? 'bg-gradient-to-r from-red-600 to-rose-600 text-white shadow-md shadow-red-600/30'
                   : 'bg-slate-900 border border-slate-800 text-slate-400 hover:text-white'
               }`}
             >
@@ -76,7 +76,7 @@ export const CaseStudies: React.FC<CaseStudiesProps> = ({ onOpenInquiry }) => {
               onClick={() => setFilter('web-development')}
               className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
                 filter === 'web-development'
-                  ? 'bg-sky-500 text-white shadow-md'
+                  ? 'bg-gradient-to-r from-yellow-400 to-amber-400 text-slate-950 shadow-md font-bold'
                   : 'bg-slate-900 border border-slate-800 text-slate-400 hover:text-white'
               }`}
             >
@@ -87,7 +87,7 @@ export const CaseStudies: React.FC<CaseStudiesProps> = ({ onOpenInquiry }) => {
               onClick={() => setFilter('digital-marketing')}
               className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
                 filter === 'digital-marketing'
-                  ? 'bg-amber-500 text-slate-950 shadow-md font-bold'
+                  ? 'bg-gradient-to-r from-amber-500 to-yellow-500 text-slate-950 shadow-md font-bold'
                   : 'bg-slate-900 border border-slate-800 text-slate-400 hover:text-white'
               }`}
             >
@@ -102,12 +102,12 @@ export const CaseStudies: React.FC<CaseStudiesProps> = ({ onOpenInquiry }) => {
           {filteredStudies.map((study) => (
             <div
               key={study.id}
-              className="p-6 sm:p-8 rounded-3xl bg-slate-900/90 border border-slate-800 hover:border-slate-700 transition-all flex flex-col justify-between space-y-6 shadow-xl relative overflow-hidden group"
+              className="p-6 sm:p-8 rounded-3xl bg-slate-900/90 border border-slate-800 hover:border-yellow-500/40 transition-all flex flex-col justify-between space-y-6 shadow-xl relative overflow-hidden group"
             >
               {/* Category Ribbon */}
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-mono font-bold px-3 py-1 rounded-full bg-slate-800 text-indigo-300 border border-slate-700">
+                  <span className="text-xs font-mono font-bold px-3 py-1 rounded-full bg-slate-800 text-yellow-400 border border-yellow-500/30">
                     {study.categoryLabel}
                   </span>
                   <span className="text-xs font-mono text-slate-500">
@@ -115,7 +115,7 @@ export const CaseStudies: React.FC<CaseStudiesProps> = ({ onOpenInquiry }) => {
                   </span>
                 </div>
 
-                <h3 className="text-xl sm:text-2xl font-bold text-white group-hover:text-sky-300 transition-colors font-['Outfit',sans-serif]">
+                <h3 className="text-xl sm:text-2xl font-bold text-white group-hover:text-yellow-400 transition-colors font-['Outfit',sans-serif]">
                   {study.title}
                 </h3>
 
@@ -190,7 +190,7 @@ export const CaseStudies: React.FC<CaseStudiesProps> = ({ onOpenInquiry }) => {
           <div className="relative w-full max-w-2xl bg-slate-900 border border-slate-700 rounded-3xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col text-left">
             <div className="p-6 bg-slate-800 border-b border-slate-700 flex items-start justify-between">
               <div>
-                <span className="text-xs font-mono text-indigo-400 font-bold uppercase">
+                <span className="text-xs font-mono text-yellow-400 font-bold uppercase">
                   {activeModalStudy.categoryLabel} • Case Breakdown
                 </span>
                 <h3 className="text-xl sm:text-2xl font-black text-white mt-1 font-['Outfit',sans-serif]">
@@ -220,8 +220,8 @@ export const CaseStudies: React.FC<CaseStudiesProps> = ({ onOpenInquiry }) => {
               </div>
 
               {/* Solution */}
-              <div className="space-y-1.5 p-4 rounded-2xl bg-sky-950/20 border border-sky-500/30">
-                <div className="text-xs font-bold font-mono text-sky-400 uppercase">
+              <div className="space-y-1.5 p-4 rounded-2xl bg-yellow-950/20 border border-yellow-500/30">
+                <div className="text-xs font-bold font-mono text-yellow-400 uppercase">
                   Prime Plus Team Strategic Solution:
                 </div>
                 <p className="leading-relaxed">
@@ -284,7 +284,7 @@ export const CaseStudies: React.FC<CaseStudiesProps> = ({ onOpenInquiry }) => {
                   setActiveModalStudy(null);
                   onOpenInquiry(title);
                 }}
-                className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold cursor-pointer"
+                className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white text-xs font-bold cursor-pointer"
               >
                 Replicate Similar Results For My Brand
               </button>

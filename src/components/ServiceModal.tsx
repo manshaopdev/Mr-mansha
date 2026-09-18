@@ -37,8 +37,8 @@ export const ServiceModal: React.FC<ServiceModalProps> = ({
             <h3 className="text-xl sm:text-2xl font-black mt-1 font-['Outfit',sans-serif]">
               {subService.title}
             </h3>
-            <p className="text-sm opacity-95 font-sans mt-0.5">
-              {subService.titleUrdu}
+            <p className="text-sm opacity-90 font-medium font-sans mt-0.5">
+              {subService.subtitle}
             </p>
           </div>
           <button

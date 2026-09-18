@@ -40,27 +40,27 @@ export const Hero: React.FC<HeroProps> = ({
   return (
     <section id="hero" className="relative pt-8 pb-16 lg:pt-14 lg:pb-24 overflow-hidden">
       {/* Dynamic Background Glows */}
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-indigo-600/15 rounded-full blur-3xl pointer-events-none -z-10 animate-pulse" />
-      <div className="absolute top-20 right-1/4 w-96 h-96 bg-sky-500/10 rounded-full blur-3xl pointer-events-none -z-10" />
-      <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 w-full max-w-5xl h-48 bg-amber-500/5 rounded-full blur-3xl pointer-events-none -z-10" />
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-red-600/15 rounded-full blur-3xl pointer-events-none -z-10 animate-pulse" />
+      <div className="absolute top-20 right-1/4 w-96 h-96 bg-yellow-500/10 rounded-full blur-3xl pointer-events-none -z-10" />
+      <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 w-full max-w-5xl h-48 bg-red-500/5 rounded-full blur-3xl pointer-events-none -z-10" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-8">
-        {/* Top Badges & Urdu Subtitle */}
+        {/* Top Badges */}
         <div className="flex flex-col items-center gap-3">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-950/80 border border-indigo-500/30 text-indigo-300 text-xs font-mono shadow-inner">
-            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-red-950/80 border border-red-500/40 text-yellow-300 text-xs font-mono shadow-inner">
+            <Sparkles className="w-3.5 h-3.5 text-yellow-400" />
             <span className="font-semibold tracking-wide">PRIME PLUS TEAM • FULL-SERVICE DIGITAL POWERHOUSE</span>
           </div>
 
           <div className="text-slate-400 text-sm font-medium tracking-wide">
-            <span className="text-slate-300 font-semibold">پرائم پلس ٹیم:</span> برانڈ گرافک ڈیزائننگ، جدید ویب ڈویلپمنٹ اور ہائی آر او آئی ڈیجیٹل مارکیٹنگ
+            <span className="text-yellow-400 font-semibold">Prime Plus Team:</span> Brand Graphic Design, Modern Web Development & High-ROI Digital Marketing
           </div>
         </div>
 
         {/* Hero Main Headline */}
         <div className="max-w-4xl mx-auto space-y-4">
           <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black text-white tracking-tight leading-[1.1] font-['Outfit',sans-serif]">
-            We Design Brands, Code <span className="bg-gradient-to-r from-sky-400 via-indigo-300 to-amber-300 bg-clip-text text-transparent">Fast Web Apps</span> & Scale <span className="bg-gradient-to-r from-amber-400 to-rose-400 bg-clip-text text-transparent">Revenue</span>.
+            We Design Brands, Code <span className="bg-gradient-to-r from-yellow-300 via-amber-400 to-yellow-500 bg-clip-text text-transparent">Fast Web Apps</span> & Scale <span className="bg-gradient-to-r from-red-500 via-rose-500 to-amber-400 bg-clip-text text-transparent">Revenue</span>.
           </h1>
           <p className="text-base sm:text-xl text-slate-300 max-w-3xl mx-auto leading-relaxed font-normal">
             {AGENCY_INFO.shortBio}
@@ -77,11 +77,11 @@ export const Hero: React.FC<HeroProps> = ({
               }}
               className={`p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl transition-all cursor-pointer flex flex-col sm:flex-row items-center justify-center gap-2 ${
                 activeHeroPill === 'graphic-design'
-                  ? 'bg-gradient-to-r from-pink-600 to-rose-600 text-white shadow-lg shadow-pink-600/30 font-bold scale-[1.02]'
+                  ? 'bg-gradient-to-r from-red-600 to-rose-600 text-white shadow-lg shadow-red-600/30 font-bold scale-[1.02]'
                   : 'bg-slate-800/60 text-slate-300 hover:text-white hover:bg-slate-800'
               }`}
             >
-              <Palette className="w-4 h-4 sm:w-5 sm:h-5 text-pink-300" />
+              <Palette className="w-4 h-4 sm:w-5 sm:h-5 text-red-300" />
               <span>Graphic Design</span>
             </button>
 
@@ -92,11 +92,11 @@ export const Hero: React.FC<HeroProps> = ({
               }}
               className={`p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl transition-all cursor-pointer flex flex-col sm:flex-row items-center justify-center gap-2 ${
                 activeHeroPill === 'web-development'
-                  ? 'bg-gradient-to-r from-sky-600 to-indigo-600 text-white shadow-lg shadow-sky-600/30 font-bold scale-[1.02]'
+                  ? 'bg-gradient-to-r from-amber-500 to-yellow-500 text-slate-950 shadow-lg shadow-yellow-500/30 font-black scale-[1.02]'
                   : 'bg-slate-800/60 text-slate-300 hover:text-white hover:bg-slate-800'
               }`}
             >
-              <Code2 className="w-4 h-4 sm:w-5 sm:h-5 text-sky-300" />
+              <Code2 className={`w-4 h-4 sm:w-5 sm:h-5 ${activeHeroPill === 'web-development' ? 'text-slate-950' : 'text-yellow-400'}`} />
               <span>Web Development</span>
             </button>
 
@@ -107,7 +107,7 @@ export const Hero: React.FC<HeroProps> = ({
               }}
               className={`p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl transition-all cursor-pointer flex flex-col sm:flex-row items-center justify-center gap-2 ${
                 activeHeroPill === 'digital-marketing'
-                  ? 'bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/30 font-bold scale-[1.02]'
+                  ? 'bg-gradient-to-r from-red-600 to-amber-500 text-white shadow-lg shadow-red-600/30 font-bold scale-[1.02]'
                   : 'bg-slate-800/60 text-slate-300 hover:text-white hover:bg-slate-800'
               }`}
             >
@@ -120,13 +120,13 @@ export const Hero: React.FC<HeroProps> = ({
           <div className="mt-3 pt-3 border-t border-slate-800 text-left px-2 sm:px-3 text-xs sm:text-sm">
             {activeHeroPill === 'graphic-design' && (
               <div className="flex flex-wrap items-center justify-between gap-2 text-slate-300">
-                <div className="flex items-center gap-2 font-mono text-pink-400">
+                <div className="flex items-center gap-2 font-mono text-red-400">
                   <CheckCircle2 className="w-4 h-4" />
                   <span>Logos, Vector Brand Guides, UI/UX in Figma, Packaging & 3D Renders</span>
                 </div>
                 <button
                   onClick={() => onSelectServiceTab('graphic-design')}
-                  className="text-xs text-pink-400 hover:underline font-bold flex items-center gap-1"
+                  className="text-xs text-red-400 hover:text-red-300 font-bold flex items-center gap-1"
                 >
                   View All Design Deliverables <ArrowRight className="w-3 h-3" />
                 </button>
@@ -135,13 +135,13 @@ export const Hero: React.FC<HeroProps> = ({
 
             {activeHeroPill === 'web-development' && (
               <div className="flex flex-wrap items-center justify-between gap-2 text-slate-300">
-                <div className="flex items-center gap-2 font-mono text-sky-400">
+                <div className="flex items-center gap-2 font-mono text-yellow-400">
                   <CheckCircle2 className="w-4 h-4" />
                   <span>React 19, Next.js, Node.js, Custom SaaS, Shopify & 100/100 Lighthouse</span>
                 </div>
                 <button
                   onClick={() => onSelectServiceTab('web-development')}
-                  className="text-xs text-sky-400 hover:underline font-bold flex items-center gap-1"
+                  className="text-xs text-yellow-400 hover:text-yellow-300 font-bold flex items-center gap-1"
                 >
                   View Engineering Specs <ArrowRight className="w-3 h-3" />
                 </button>
@@ -156,7 +156,7 @@ export const Hero: React.FC<HeroProps> = ({
                 </div>
                 <button
                   onClick={() => onSelectServiceTab('digital-marketing')}
-                  className="text-xs text-amber-400 hover:underline font-bold flex items-center gap-1"
+                  className="text-xs text-amber-400 hover:text-amber-300 font-bold flex items-center gap-1"
                 >
                   View Marketing Strategy <ArrowRight className="w-3 h-3" />
                 </button>
@@ -166,7 +166,7 @@ export const Hero: React.FC<HeroProps> = ({
             {activeHeroPill === 'all' && (
               <div className="flex flex-wrap items-center justify-between gap-2 text-slate-400 text-xs">
                 <span>Select any discipline above to preview specific tool stacks and core deliverables.</span>
-                <span className="text-indigo-400 font-mono">100% In-House Senior Execution</span>
+                <span className="text-yellow-400 font-mono">100% In-House Senior Execution</span>
               </div>
             )}
           </div>
@@ -176,17 +176,17 @@ export const Hero: React.FC<HeroProps> = ({
         <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 pt-2">
           <button
             onClick={() => onOpenInquiry()}
-            className="px-6 sm:px-8 py-3.5 sm:py-4 rounded-2xl bg-gradient-to-r from-sky-500 via-indigo-600 to-purple-600 hover:from-sky-400 hover:to-purple-500 text-white font-extrabold text-base shadow-[0_0_30px_rgba(99,102,241,0.5)] transition-all cursor-pointer flex items-center gap-2.5 scale-100 hover:scale-[1.02]"
+            className="px-6 sm:px-8 py-3.5 sm:py-4 rounded-2xl bg-gradient-to-r from-red-600 via-rose-600 to-amber-500 hover:from-red-500 hover:to-amber-400 text-white font-extrabold text-base shadow-[0_0_30px_rgba(239,68,68,0.5)] transition-all cursor-pointer flex items-center gap-2.5 scale-100 hover:scale-[1.02]"
           >
             <span>Start Your Project</span>
-            <ArrowRight className="w-5 h-5" />
+            <ArrowRight className="w-5 h-5 text-yellow-300" />
           </button>
 
           <button
             onClick={onOpenEstimator}
             className="px-6 sm:px-7 py-3.5 sm:py-4 rounded-2xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700 text-slate-200 hover:text-white font-bold text-base transition-all cursor-pointer flex items-center gap-2.5"
           >
-            <Calculator className="w-5 h-5 text-sky-400" />
+            <Calculator className="w-5 h-5 text-yellow-400" />
             <span>Interactive Cost Calculator</span>
           </button>
 

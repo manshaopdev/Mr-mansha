@@ -7,8 +7,8 @@ export const Testimonials: React.FC = () => {
     <section className="py-16 sm:py-24 border-t border-slate-800/80 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         <div className="text-center max-w-3xl mx-auto space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-mono">
-            <Star className="w-3.5 h-3.5 fill-amber-400" />
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/10 border border-red-500/30 text-yellow-400 text-xs font-mono">
+            <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />
             <span>CLIENT EXPERIENCES</span>
           </div>
           <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight font-['Outfit',sans-serif]">
@@ -23,13 +23,13 @@ export const Testimonials: React.FC = () => {
           {TESTIMONIALS.map((t) => (
             <div
               key={t.id}
-              className="p-6 sm:p-8 rounded-3xl bg-slate-900/90 border border-slate-800 flex flex-col justify-between space-y-6 text-left shadow-xl"
+              className="p-6 sm:p-8 rounded-3xl bg-slate-900/90 border border-slate-800 hover:border-yellow-500/30 flex flex-col justify-between space-y-6 text-left shadow-xl transition-all"
             >
               <div className="space-y-4">
                 {/* Rating stars */}
-                <div className="flex items-center gap-1 text-amber-400">
+                <div className="flex items-center gap-1 text-yellow-400">
                   {Array.from({ length: t.rating }).map((_, i) => (
-                    <Star key={i} className="w-4 h-4 fill-amber-400" />
+                    <Star key={i} className="w-4 h-4 fill-yellow-400" />
                   ))}
                 </div>
 
@@ -38,7 +38,7 @@ export const Testimonials: React.FC = () => {
                 </p>
 
                 {/* Project Impact Pill */}
-                <div className="p-3 rounded-xl bg-slate-800/80 border border-slate-700/60 text-xs text-indigo-300 font-mono font-semibold flex items-center gap-2">
+                <div className="p-3 rounded-xl bg-slate-800/80 border border-slate-700/60 text-xs text-yellow-300 font-mono font-semibold flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
                   <span>Impact: {t.projectImpact}</span>
                 </div>
@@ -49,7 +49,7 @@ export const Testimonials: React.FC = () => {
                 <img
                   src={t.avatar}
                   alt={t.clientName}
-                  className="w-12 h-12 rounded-full object-cover border-2 border-indigo-500/40"
+                  className="w-12 h-12 rounded-full object-cover border-2 border-red-500/50"
                   loading="lazy"
                 />
                 <div>

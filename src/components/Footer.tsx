@@ -34,7 +34,7 @@ export const Footer: React.FC<FooterProps> = ({ onScrollTo, onSelectService }) =
           {/* Brand Col */}
           <div className="lg:col-span-2 space-y-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 via-sky-500 to-amber-300 p-[1.5px]">
+              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-red-600 via-amber-500 to-yellow-400 p-[1.5px]">
                 <div className="w-full h-full bg-slate-950 rounded-2xl flex items-center justify-center font-black text-white text-lg font-['Outfit',sans-serif]">
                   P+
                 </div>
@@ -43,7 +43,7 @@ export const Footer: React.FC<FooterProps> = ({ onScrollTo, onSelectService }) =
                 <span className="font-extrabold text-xl tracking-tight text-white font-['Outfit',sans-serif]">
                   PRIME PLUS TEAM
                 </span>
-                <p className="text-[11px] text-indigo-400 font-mono">
+                <p className="text-[11px] text-yellow-400 font-mono">
                   Graphic Design • Web Development • Digital Marketing
                 </p>
               </div>
@@ -64,7 +64,7 @@ export const Footer: React.FC<FooterProps> = ({ onScrollTo, onSelectService }) =
 
               <button
                 onClick={() => onScrollTo('contact-inquiry')}
-                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold transition-colors cursor-pointer"
+                className="px-4 py-2 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white text-xs font-bold transition-colors cursor-pointer"
               >
                 Send Request
               </button>
@@ -73,7 +73,7 @@ export const Footer: React.FC<FooterProps> = ({ onScrollTo, onSelectService }) =
 
           {/* Graphic Design Col */}
           <div className="space-y-3">
-            <div className="flex items-center gap-1.5 text-pink-400 font-bold text-xs uppercase font-mono tracking-wider">
+            <div className="flex items-center gap-1.5 text-red-400 font-bold text-xs uppercase font-mono tracking-wider">
               <Palette className="w-3.5 h-3.5" />
               <span>Graphic Design</span>
             </div>
@@ -123,7 +123,7 @@ export const Footer: React.FC<FooterProps> = ({ onScrollTo, onSelectService }) =
 
           {/* Web Development Col */}
           <div className="space-y-3">
-            <div className="flex items-center gap-1.5 text-sky-400 font-bold text-xs uppercase font-mono tracking-wider">
+            <div className="flex items-center gap-1.5 text-yellow-400 font-bold text-xs uppercase font-mono tracking-wider">
               <Code2 className="w-3.5 h-3.5" />
               <span>Web Development</span>
             </div>
@@ -235,7 +235,7 @@ export const Footer: React.FC<FooterProps> = ({ onScrollTo, onSelectService }) =
           <div className="flex items-center gap-4">
             <button
               onClick={() => onScrollTo('cost-estimator')}
-              className="hover:text-slate-200 text-sky-400 font-mono"
+              className="hover:text-slate-200 text-yellow-400 font-mono"
             >
               Calculator
             </button>

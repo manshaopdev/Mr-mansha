@@ -5,7 +5,7 @@ export type Currency = 'PKR' | 'USD';
 export interface SubService {
   id: string;
   title: string;
-  titleUrdu: string;
+  subtitle: string;
   shortDesc: string;
   fullDesc: string;
   deliverables: string[];
@@ -17,7 +17,7 @@ export interface SubService {
 export interface ServiceDetail {
   id: 'graphic-design' | 'web-development' | 'digital-marketing';
   title: string;
-  titleUrdu: string;
+  categorySubtitle: string;
   tagline: string;
   heroPitch: string;
   badge: string;
@@ -82,7 +82,7 @@ export interface TeamMember {
   id: string;
   name: string;
   role: string;
-  roleUrdu: string;
+  specialtyHighlight: string;
   experience: string;
   specialties: string[];
   bio: string;
@@ -108,4 +108,50 @@ export interface InquiryFormData {
   timeline: string;
   projectBrief: string;
   currency: Currency;
+}
+
+export interface ClientMilestone {
+  step: string;
+  title: string;
+  status: 'completed' | 'in-progress' | 'pending';
+  date: string;
+  description: string;
+}
+
+export interface ClientDeliverable {
+  name: string;
+  category: string;
+  format: string;
+  status: 'ready' | 'working' | 'queued';
+  downloadLabel?: string;
+  url?: string;
+}
+
+export interface ClientProject {
+  id: string; // e.g. PPT-2024-8841
+  clientName: string;
+  clientCompany: string;
+  clientEmail: string;
+  clientPhone: string;
+  projectTitle: string;
+  category: 'Graphic Design' | 'Web Development' | 'Digital Marketing' | 'All-in-One Suite';
+  currentPhase: 'Discovery & Brief' | 'Creative Prototyping' | 'Development Sprint' | 'QA & Staging' | 'Live & Handover';
+  progressPercent: number;
+  startDate: string;
+  targetLaunch: string;
+  leadArchitect: {
+    name: string;
+    role: string;
+    phone: string;
+  };
+  stagingUrl?: string;
+  milestones: ClientMilestone[];
+  deliverables: ClientDeliverable[];
+  financials: {
+    totalPkr: number;
+    totalUsd: number;
+    status: 'Paid in Full' | 'Deposit Cleared (50%)' | 'Awaiting Milestone 2' | 'Inquiry Pending Confirmation';
+    invoiceNumber: string;
+  };
+  recentUpdate: string;
 }
