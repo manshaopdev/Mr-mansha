@@ -1,6 +1,6 @@
 {
-  "name": "AR AdRewards",
-  "description": "Earn real Pakistani Rupees (₨ PKR) watching 15-second ads, promote YouTube channels and businesses, with instant Easypaisa and JazzCash payouts.",
+  "name": "Pakistan Ki Awaz",
+  "description": "پاکستان کی آواز (Pakistan Ki Awaz): پاکستانی وائس جنریٹر، لائیو اردو املا درستگی، الفاظ پیشگوئی، لائیو پلے بیک اور MP3 ڈاؤن لوڈ۔",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

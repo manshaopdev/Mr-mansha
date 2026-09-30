@@ -23,6 +23,11 @@
   font-variant-numeric: tabular-nums;
 }
 
+.font-urdu {
+  font-family: 'Noto Nastaliq Urdu', 'Gulzar', 'Jameel Noori Nastaleeq', 'Urdu Typesetting', serif;
+  line-height: 2.1;
+}
+
 /* Glassmorphism utility classes */
 .glass-panel {
   background: rgba(30, 41, 59, 0.7);
