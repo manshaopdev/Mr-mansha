@@ -1,422 +1,456 @@
 import React, { useState } from 'react';
-import {
-  Sparkles,
-  Menu,
-  X,
-  Phone,
-  MessageCircle,
-  Palette,
-  Code2,
-  TrendingUp,
-  Calculator,
-  Briefcase,
-  ChevronDown,
-  ShieldCheck
-} from 'lucide-react';
-import { Currency } from '../types/agency';
-import { AGENCY_INFO } from '../data/agencyData';
+import { UserWallet, UserProfile } from '../types/adRewards';
+import { soundFX } from '../utils/audio';
 
 interface NavbarProps {
-  currency: Currency;
-  onToggleCurrency: () => void;
-  onSetCurrency?: (c: Currency) => void;
-  onOpenInquiry: (initialService?: string) => void;
-  onScrollTo: (elementId: string) => void;
-  onOpenPortal: () => void;
+  wallet: UserWallet;
+  currentUser: UserProfile;
+  currentTab: 'watch' | 'plans' | 'create' | 'wallet' | 'referrals' | 'arbitrage' | 'admin' | 'auth';
+  setCurrentTab: (tab: 'watch' | 'plans' | 'create' | 'wallet' | 'referrals' | 'arbitrage' | 'admin' | 'auth') => void;
+  openDepositModal: () => void;
+  openWithdrawModal: () => void;
+  openAuthModal: () => void;
+  openMyAccountModal: () => void;
+  pendingDepositsCount: number;
+  soundEnabled: boolean;
+  setSoundEnabled: (val: boolean) => void;
+  userRole: 'earner' | 'advertiser' | 'admin';
+  setUserRole: (role: 'earner' | 'advertiser' | 'admin') => void;
+  onLogout?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
-  currency,
-  onToggleCurrency,
-  onSetCurrency,
-  onOpenInquiry,
-  onScrollTo,
-  onOpenPortal,
+  wallet,
+  currentUser,
+  currentTab,
+  setCurrentTab,
+  openDepositModal,
+  openWithdrawModal,
+  openMyAccountModal,
+  pendingDepositsCount,
+  soundEnabled,
+  setSoundEnabled,
+  onLogout
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [servicesDropdownOpen, setServicesDropdownOpen] = useState(false);
 
-  const handleNavClick = (id: string) => {
-    onScrollTo(id);
+  const handleNavClick = (tab: 'watch' | 'plans' | 'create' | 'wallet' | 'referrals' | 'arbitrage' | 'admin' | 'auth') => {
+    soundFX.playClick();
+    setCurrentTab(tab);
     setMobileMenuOpen(false);
-    setServicesDropdownOpen(false);
   };
 
-  const openWhatsApp = () => {
-    const text = encodeURIComponent(
-      'Hello Prime Plus Team! I visited your website and would like to discuss a project regarding Graphic Design / Web Development / Digital Marketing.'
-    );
-    window.open(`https://wa.me/${AGENCY_INFO.contacts.whatsapp.replace(/[^0-9]/g, '')}?text=${text}`, '_blank');
+  const toggleSound = () => {
+    const next = !soundEnabled;
+    setSoundEnabled(next);
+    soundFX.enabled = next;
+    if (next) soundFX.playRewardSuccess();
   };
 
   return (
-    <nav className="sticky top-0 z-50 bg-[#090D16]/95 backdrop-blur-md border-b border-slate-800/80">
-      {/* Top Announcement Ribbon */}
-      <div className="bg-gradient-to-r from-indigo-950 via-slate-900 to-indigo-950 border-b border-indigo-500/20 px-4 py-1.5 text-xs text-slate-300">
-        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <span className="flex h-2 w-2 relative">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-            </span>
-            <span className="font-medium text-slate-200">
-              {AGENCY_INFO.contacts.availability}
-            </span>
-            <span className="hidden sm:inline text-slate-500">•</span>
-            <span className="hidden sm:inline text-indigo-300 font-mono text-[11px]">
-              Graphic Design • Web Development • Digital Marketing
-            </span>
-          </div>
-
-          <div className="flex items-center gap-4 text-[11px] font-mono">
-            <button
-              onClick={openWhatsApp}
-              className="flex items-center gap-1.5 text-emerald-400 hover:text-emerald-300 transition-colors cursor-pointer"
-            >
-              <MessageCircle className="w-3.5 h-3.5" />
-              <span>WhatsApp: {AGENCY_INFO.contacts.whatsappFormatted}</span>
-            </button>
-            <span className="text-slate-600">|</span>
-            {/* Segmented Currency Switcher */}
-            <div className="flex items-center gap-1 bg-slate-900/90 border border-slate-700/80 p-0.5 rounded-lg">
-              <span className="text-[10px] text-slate-400 px-1 font-semibold hidden md:inline">Currency:</span>
-              <button
-                onClick={() => (onSetCurrency ? onSetCurrency('PKR') : onToggleCurrency())}
-                className={`px-2 py-0.5 rounded text-[11px] font-bold transition-all cursor-pointer ${
-                  currency === 'PKR'
-                    ? 'bg-emerald-500 text-slate-950 shadow-sm shadow-emerald-500/30'
-                    : 'text-slate-400 hover:text-white'
-                }`}
-                title="View prices in Pakistani Rupees (PKR ₨)"
-              >
-                PKR (₨)
-              </button>
-              <button
-                onClick={() => (onSetCurrency ? onSetCurrency('USD') : onToggleCurrency())}
-                className={`px-2 py-0.5 rounded text-[11px] font-bold transition-all cursor-pointer ${
-                  currency === 'USD'
-                    ? 'bg-indigo-500 text-white shadow-sm shadow-indigo-500/30'
-                    : 'text-slate-400 hover:text-white'
-                }`}
-                title="View prices in US Dollars (USD $)"
-              >
-                USD ($)
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Navbar */}
+    <header className="sticky top-0 z-40 bg-[#0F172A]/90 backdrop-blur-md border-b border-slate-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
-          {/* Brand Logo */}
-          <div
-            onClick={() => handleNavClick('hero')}
-            className="flex items-center gap-3 cursor-pointer group"
+        <div className="flex items-center justify-between h-20 gap-4">
+          
+          {/* Zone 1: Stylized Brand Logo */}
+          <div 
+            onClick={() => handleNavClick('watch')}
+            className="flex items-center gap-3 cursor-pointer group shrink-0"
           >
-            <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-red-600 via-amber-500 to-yellow-400 p-[1.5px] shadow-[0_0_20px_rgba(239,68,68,0.4)] group-hover:shadow-[0_0_25px_rgba(234,179,8,0.6)] transition-all">
-              <div className="w-full h-full bg-[#08090D] rounded-2xl flex items-center justify-center">
-                <span className="font-black text-xl bg-gradient-to-r from-yellow-300 via-amber-400 to-red-500 bg-clip-text text-transparent">
-                  P+
-                </span>
+            <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-[#10B981] via-[#06B6D4] to-emerald-400 p-[2px] transition-transform duration-200 group-hover:scale-105">
+              <div className="w-full h-full bg-[#0F172A] rounded-[10px] flex items-center justify-center">
+                <i className="fa-solid fa-list-check text-transparent bg-clip-text bg-gradient-to-r from-[#10B981] to-[#06B6D4] text-lg pl-0.5"></i>
               </div>
             </div>
             <div>
-              <div className="flex items-center gap-1.5">
-                <span className="font-extrabold text-xl tracking-tight text-white font-['Outfit',sans-serif]">
-                  PRIME PLUS
+              <span className="text-xl font-bold tracking-tight text-white block">
+                AR <span className="text-[#10B981]">AdRewards</span>
+              </span>
+              <span className="text-[11px] text-slate-400 block -mt-1 tracking-wider uppercase">
+                Tasks & Earning · JazzCash 03262636289
+              </span>
+            </div>
+          </div>
+
+          {/* Zone 2: Navigation Links */}
+          <nav className="hidden lg:flex items-center gap-1 xl:gap-2">
+            
+            {/* 1. Tasks Tab (Replacing Watch Ads) */}
+            <button
+              onClick={() => handleNavClick('watch')}
+              className={`px-3 py-2 text-sm font-semibold rounded-lg transition-colors whitespace-nowrap flex items-center gap-2 cursor-pointer ${
+                currentTab === 'watch' 
+                  ? 'bg-slate-800 text-[#10B981] ring-1 ring-emerald-500/30' 
+                  : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
+              }`}
+            >
+              <i className="fa-solid fa-list-check text-xs text-emerald-400"></i>
+              <span>Tasks (₨ 100)</span>
+            </button>
+
+            {/* 2. Plans Tab (VIP Earning Plans) */}
+            <button
+              onClick={() => handleNavClick('plans')}
+              className={`px-3 py-2 text-sm font-semibold rounded-lg transition-colors whitespace-nowrap flex items-center gap-1.5 cursor-pointer ${
+                currentTab === 'plans' 
+                  ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40 ring-1 ring-amber-500/30' 
+                  : 'text-amber-400 hover:text-amber-300 hover:bg-slate-800/50'
+              }`}
+            >
+              <i className="fa-solid fa-crown text-xs text-amber-400"></i>
+              <span>Plans</span>
+              <span className="px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 text-[10px] font-bold">
+                VIP
+              </span>
+            </button>
+
+            {/* 3. Post Ad (Advertiser Panel) */}
+            <button
+              onClick={() => handleNavClick('create')}
+              className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors whitespace-nowrap flex items-center gap-2 cursor-pointer ${
+                currentTab === 'create' 
+                  ? 'bg-slate-800 text-[#06B6D4]' 
+                  : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
+              }`}
+            >
+              <i className="fa-solid fa-bullhorn text-xs opacity-75"></i>
+              <span>Post Ad</span>
+            </button>
+
+            {/* 4. Wallet Tab */}
+            <button
+              onClick={() => handleNavClick('wallet')}
+              className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors whitespace-nowrap flex items-center gap-2 cursor-pointer ${
+                currentTab === 'wallet' 
+                  ? 'bg-slate-800 text-[#10B981]' 
+                  : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
+              }`}
+            >
+              <i className="fa-solid fa-wallet text-xs opacity-75"></i>
+              <span>Wallet</span>
+            </button>
+
+            {/* 5. Referral Tab */}
+            <button
+              onClick={() => handleNavClick('referrals')}
+              className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors whitespace-nowrap flex items-center gap-2 cursor-pointer ${
+                currentTab === 'referrals' 
+                  ? 'bg-slate-800 text-[#10B981]' 
+                  : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
+              }`}
+            >
+              <i className="fa-solid fa-users text-xs opacity-75"></i>
+              <span>Referral (10%)</span>
+            </button>
+
+            {/* 6. Admin Panel Tab */}
+            <button
+              onClick={() => handleNavClick('admin')}
+              className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors whitespace-nowrap flex items-center gap-1.5 cursor-pointer ${
+                currentTab === 'admin' 
+                  ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' 
+                  : 'text-amber-400/90 hover:text-amber-300 hover:bg-amber-500/10'
+              }`}
+            >
+              <i className="fa-solid fa-shield-halved text-xs"></i>
+              <span>Admin</span>
+              {pendingDepositsCount > 0 && (
+                <span className="w-5 h-5 rounded-full bg-amber-500 text-slate-950 font-bold text-[10px] flex items-center justify-center ml-0.5">
+                  {pendingDepositsCount}
                 </span>
-                <span className="text-xs px-2 py-0.5 rounded-md bg-red-500/20 text-yellow-300 font-bold border border-red-500/30">
-                  TEAM
+              )}
+            </button>
+
+            {/* 7. Dedicated Login / Register Nav Link */}
+            <button
+              onClick={() => handleNavClick('auth')}
+              className={`px-3 py-2 text-sm font-semibold rounded-lg transition-colors whitespace-nowrap flex items-center gap-1.5 cursor-pointer ${
+                currentTab === 'auth'
+                  ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                  : 'text-slate-300 hover:text-emerald-400 hover:bg-slate-800/50'
+              }`}
+            >
+              <i className="fa-solid fa-user-plus text-xs text-amber-400"></i>
+              <span>Register</span>
+              <span className="px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 text-[10px] font-bold border border-amber-500/30 ml-0.5">
+                ₨ 50
+              </span>
+            </button>
+          </nav>
+
+          {/* Zone 3: Live Wallet Balances & Actions */}
+          <div className="hidden sm:flex items-center gap-2.5">
+            
+            {/* View Plans Button */}
+            <button
+              onClick={() => handleNavClick('plans')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
+                currentTab === 'plans'
+                  ? 'bg-amber-500/25 border-amber-400 text-amber-300'
+                  : 'bg-slate-800/90 hover:bg-slate-800 border-amber-500/40 text-amber-400'
+              }`}
+              title="Click to view all VIP Earning Plans"
+            >
+              <i className="fa-solid fa-crown text-amber-400"></i>
+              <span>Plans</span>
+            </button>
+
+            {/* Dual Wallet Display */}
+            <div className="flex items-center gap-2 bg-[#1E293B] border border-slate-700/80 rounded-xl px-3 py-1.5 text-xs">
+              {/* Earnings Wallet */}
+              <div 
+                onClick={openWithdrawModal}
+                className="cursor-pointer group pr-2.5 border-r border-slate-700 hover:opacity-90 transition-opacity"
+                title="Click to withdraw earnings to JazzCash"
+              >
+                <span className="text-[10px] uppercase tracking-wider text-slate-400 block font-medium">Earnings</span>
+                <span className="font-mono-numbers font-bold text-[#10B981] text-sm flex items-center gap-1">
+                  ₨ {wallet.earningsBalance.toFixed(2)}
+                  <i className="fa-solid fa-arrow-up-right-from-square text-[9px] opacity-60 group-hover:opacity-100"></i>
                 </span>
               </div>
-              <p className="text-[11px] text-slate-400 tracking-wide font-medium flex items-center gap-1">
-                <span>Design</span>
-                <span className="text-yellow-400">•</span>
-                <span>Web Dev</span>
-                <span className="text-yellow-400">•</span>
-                <span>Marketing</span>
-              </p>
-            </div>
-          </div>
 
-          {/* Desktop Nav Links */}
-          <div className="hidden lg:flex items-center gap-6 text-sm font-medium text-slate-300">
-            {/* Services Dropdown */}
-            <div
-              className="relative"
-              onMouseEnter={() => setServicesDropdownOpen(true)}
-              onMouseLeave={() => setServicesDropdownOpen(false)}
-            >
-              <button
-                onClick={() => handleNavClick('services-breakdown')}
-                className="flex items-center gap-1.5 hover:text-white transition-colors cursor-pointer py-2"
+              {/* Deposit Balance */}
+              <div 
+                onClick={openDepositModal}
+                className="cursor-pointer group pl-1 hover:opacity-90 transition-opacity"
+                title="Click to top up deposit balance via JazzCash 03262636289"
               >
-                <span>Services</span>
-                <ChevronDown className={`w-4 h-4 transition-transform ${servicesDropdownOpen ? 'rotate-180 text-yellow-400' : ''}`} />
-              </button>
-
-              {servicesDropdownOpen && (
-                <div className="absolute top-full left-0 w-80 bg-slate-900/95 backdrop-blur-xl border border-slate-700/80 rounded-2xl p-2.5 shadow-2xl shadow-black/80 space-y-1">
-                  <div
-                    onClick={() => handleNavClick('service-graphic-design')}
-                    className="p-3 rounded-xl hover:bg-slate-800/80 transition-colors cursor-pointer flex items-start gap-3 group"
-                  >
-                    <div className="p-2 rounded-lg bg-red-500/20 text-red-400 group-hover:bg-red-500/30">
-                      <Palette className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <div className="font-semibold text-white group-hover:text-red-300 flex items-center gap-1.5">
-                        <span>Graphic Designing</span>
-                      </div>
-                      <p className="text-xs text-slate-400 mt-0.5">
-                        Logos, Branding, UI/UX, Packaging, 3D & Social Creatives
-                      </p>
-                    </div>
-                  </div>
-
-                  <div
-                    onClick={() => handleNavClick('service-web-development')}
-                    className="p-3 rounded-xl hover:bg-slate-800/80 transition-colors cursor-pointer flex items-start gap-3 group"
-                  >
-                    <div className="p-2 rounded-lg bg-yellow-500/20 text-yellow-400 group-hover:bg-yellow-500/30">
-                      <Code2 className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <div className="font-semibold text-white group-hover:text-yellow-300 flex items-center gap-1.5">
-                        <span>Web Development</span>
-                      </div>
-                      <p className="text-xs text-slate-400 mt-0.5">
-                        React 19, Next.js, Full-Stack, E-Commerce, Custom SaaS
-                      </p>
-                    </div>
-                  </div>
-
-                  <div
-                    onClick={() => handleNavClick('service-digital-marketing')}
-                    className="p-3 rounded-xl hover:bg-slate-800/80 transition-colors cursor-pointer flex items-start gap-3 group"
-                  >
-                    <div className="p-2 rounded-lg bg-amber-500/20 text-amber-400 group-hover:bg-amber-500/30">
-                      <TrendingUp className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <div className="font-semibold text-white group-hover:text-amber-300 flex items-center gap-1.5">
-                        <span>Digital Marketing</span>
-                      </div>
-                      <p className="text-xs text-slate-400 mt-0.5">
-                        Meta & Google Ads, SEO, ROAS Growth & SMM
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              )}
+                <span className="text-[10px] uppercase tracking-wider text-slate-400 block font-medium">Deposit</span>
+                <span className="font-mono-numbers font-bold text-slate-200 text-sm flex items-center gap-1">
+                  ₨ {wallet.depositBalance.toFixed(2)}
+                  <i className="fa-solid fa-plus text-[9px] text-[#06B6D4] opacity-80 group-hover:opacity-100"></i>
+                </span>
+              </div>
             </div>
 
+            {/* My Account Button */}
             <button
-              onClick={() => handleNavClick('case-studies')}
-              className="hover:text-white transition-colors cursor-pointer"
+              onClick={() => {
+                soundFX.playClick();
+                openMyAccountModal();
+              }}
+              className="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-semibold text-white transition-all shadow-sm cursor-pointer"
+              title="Open My Account details"
             >
-              Case Studies
+              <div className="w-5 h-5 rounded-full bg-[#10B981] text-slate-950 font-extrabold text-[10px] flex items-center justify-center">
+                {currentUser.name[0]}
+              </div>
+              <span className="truncate max-w-[90px]">{currentUser.name.split(' ')[0]}</span>
             </button>
 
-            <button
-              onClick={() => handleNavClick('cost-estimator')}
-              className="hover:text-white transition-colors cursor-pointer flex items-center gap-1.5"
-            >
-              <Calculator className="w-4 h-4 text-yellow-400" />
-              <span>Cost Estimator</span>
-            </button>
+            {/* Logout / Switch Button */}
+            {onLogout && (
+              <button
+                onClick={() => {
+                  soundFX.playClick();
+                  onLogout();
+                }}
+                className="p-2 rounded-lg border border-slate-800 text-slate-400 hover:text-rose-400 hover:bg-rose-950/30 hover:border-rose-800/40 transition-colors cursor-pointer"
+                title="Logout to Login/Register page"
+              >
+                <i className="fa-solid fa-arrow-right-from-bracket text-xs"></i>
+              </button>
+            )}
 
+            {/* Sound Toggle */}
             <button
-              onClick={() => handleNavClick('pricing-packages')}
-              className="hover:text-white transition-colors cursor-pointer"
+              onClick={toggleSound}
+              className={`w-9 h-9 rounded-lg flex items-center justify-center border transition-colors cursor-pointer ${
+                soundEnabled 
+                  ? 'border-slate-700 text-emerald-400 hover:bg-slate-800' 
+                  : 'border-slate-800 text-slate-500 hover:bg-slate-800'
+              }`}
+              title={soundEnabled ? 'Mute sound effects' : 'Enable sound effects'}
+              aria-label="Sound Toggle"
             >
-              Packages
-            </button>
-
-            <button
-              onClick={() => handleNavClick('process-flow')}
-              className="hover:text-white transition-colors cursor-pointer"
-            >
-              How We Work
-            </button>
-
-            <button
-              onClick={() => handleNavClick('team-about')}
-              className="hover:text-white transition-colors cursor-pointer"
-            >
-              The Team
+              <i className={`fa-solid ${soundEnabled ? 'fa-volume-high' : 'fa-volume-xmark'} text-xs`}></i>
             </button>
           </div>
 
-          {/* Action CTAs */}
-          <div className="hidden sm:flex items-center gap-2.5">
+          {/* Mobile Menu Button */}
+          <div className="flex items-center gap-2 sm:hidden">
             <button
-              onClick={onOpenPortal}
-              className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700/80 border border-slate-700 text-slate-200 hover:text-white transition-all cursor-pointer flex items-center gap-2 text-xs font-mono font-semibold"
-              title="Open Prime Plus Client Portal & Track Progress"
+              onClick={() => handleNavClick('plans')}
+              className="px-2 py-1 text-xs font-bold text-amber-400 bg-slate-800 border border-amber-500/40 rounded-lg flex items-center gap-1 cursor-pointer"
             >
-              <ShieldCheck className="w-4 h-4 text-yellow-400" />
-              <span>Client Portal</span>
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+              <i className="fa-solid fa-crown text-amber-400 text-[10px]"></i>
+              <span>Plans</span>
             </button>
-
             <button
-              onClick={openWhatsApp}
-              className="p-2.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 transition-colors cursor-pointer flex items-center gap-2 text-xs font-semibold"
-              title="Chat with Prime Plus Team on WhatsApp"
+              onClick={openMyAccountModal}
+              className="w-8 h-8 rounded-lg bg-slate-800 text-white flex items-center justify-center text-xs font-bold border border-slate-700 cursor-pointer"
             >
-              <MessageCircle className="w-4 h-4" />
-              <span className="hidden md:inline">WhatsApp Us</span>
+              {currentUser.name[0]}
             </button>
-
-            <button
-              onClick={() => onOpenInquiry()}
-              className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-red-600 via-rose-600 to-amber-500 hover:from-red-500 hover:to-amber-400 text-white font-extrabold text-xs sm:text-sm shadow-[0_0_20px_rgba(239,68,68,0.45)] transition-all cursor-pointer flex items-center gap-2"
-            >
-              <Sparkles className="w-4 h-4 text-yellow-300" />
-              <span>Get Free Quote</span>
-            </button>
-          </div>
-
-          {/* Mobile Menu Toggle */}
-          <div className="flex lg:hidden items-center gap-2">
-            <div className="flex items-center bg-slate-800/90 border border-slate-700 p-0.5 rounded-lg text-xs font-mono">
-              <button
-                onClick={() => (onSetCurrency ? onSetCurrency('PKR') : onToggleCurrency())}
-                className={`px-2 py-0.5 rounded text-[11px] font-bold transition-all ${
-                  currency === 'PKR' ? 'bg-emerald-500 text-slate-950 font-black' : 'text-slate-400'
-                }`}
-              >
-                PKR
-              </button>
-              <button
-                onClick={() => (onSetCurrency ? onSetCurrency('USD') : onToggleCurrency())}
-                className={`px-2 py-0.5 rounded text-[11px] font-bold transition-all ${
-                  currency === 'USD' ? 'bg-indigo-500 text-white font-black' : 'text-slate-400'
-                }`}
-              >
-                USD
-              </button>
-            </div>
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white transition-colors cursor-pointer"
+              className="p-2 text-slate-400 hover:text-white rounded-lg focus:outline-none cursor-pointer"
               aria-label="Toggle Navigation Menu"
             >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              <i className={`fa-solid ${mobileMenuOpen ? 'fa-xmark' : 'fa-bars'} text-lg`}></i>
             </button>
           </div>
+
         </div>
       </div>
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-slate-900 border-b border-slate-800 px-4 pt-3 pb-6 space-y-3">
-          <div className="grid grid-cols-1 gap-2 pt-2">
-            <div className="text-xs font-bold uppercase tracking-wider text-slate-400 px-2">
-              Our 3 Core Disciplines:
+        <div className="lg:hidden border-t border-slate-800 bg-[#0F172A] px-4 pt-3 pb-6 space-y-3">
+          <div className="grid grid-cols-2 gap-2 pb-3 border-b border-slate-800">
+            <div 
+              onClick={() => { openWithdrawModal(); setMobileMenuOpen(false); }}
+              className="bg-[#1E293B] p-2.5 rounded-lg border border-slate-700 cursor-pointer"
+            >
+              <div className="text-[10px] text-slate-400 uppercase">Earnings</div>
+              <div className="font-mono-numbers font-bold text-[#10B981] text-sm">
+                ₨ {wallet.earningsBalance.toFixed(2)}
+              </div>
+              <div className="text-[10px] text-emerald-400 mt-0.5">Withdraw via JazzCash →</div>
             </div>
-            <button
-              onClick={() => handleNavClick('service-graphic-design')}
-              className="flex items-center gap-3 p-3 rounded-xl bg-slate-800/80 text-left text-red-300 font-semibold"
-            >
-              <Palette className="w-5 h-5 text-red-400" />
-              <div>
-                <div>Graphic & Brand Designing</div>
-                <div className="text-[11px] text-slate-400 font-normal">Logos, UI/UX, Packaging, Social Media</div>
-              </div>
-            </button>
 
-            <button
-              onClick={() => handleNavClick('service-web-development')}
-              className="flex items-center gap-3 p-3 rounded-xl bg-slate-800/80 text-left text-yellow-300 font-semibold"
+            <div 
+              onClick={() => { openDepositModal(); setMobileMenuOpen(false); }}
+              className="bg-[#1E293B] p-2.5 rounded-lg border border-slate-700 cursor-pointer"
             >
-              <Code2 className="w-5 h-5 text-yellow-400" />
-              <div>
-                <div>Web & Full-Stack Development</div>
-                <div className="text-[11px] text-slate-400 font-normal">React, Next.js, Node, E-Commerce</div>
+              <div className="text-[10px] text-slate-400 uppercase">Deposit</div>
+              <div className="font-mono-numbers font-bold text-slate-200 text-sm">
+                ₨ {wallet.depositBalance.toFixed(2)}
               </div>
-            </button>
-
-            <button
-              onClick={() => handleNavClick('service-digital-marketing')}
-              className="flex items-center gap-3 p-3 rounded-xl bg-slate-800/80 text-left text-amber-300 font-semibold"
-            >
-              <TrendingUp className="w-5 h-5 text-amber-400" />
-              <div>
-                <div>Digital Marketing & Growth</div>
-                <div className="text-[11px] text-slate-400 font-normal">Meta Ads, Google Ads, SEO, SMM</div>
-              </div>
-            </button>
+              <div className="text-[10px] text-cyan-400 mt-0.5">JazzCash 03262636289 →</div>
+            </div>
           </div>
 
-          <div className="border-t border-slate-800 pt-3 flex flex-col gap-2 font-medium text-slate-200">
+          <div className="flex flex-col gap-1 text-sm font-medium">
             <button
-              onClick={() => handleNavClick('case-studies')}
-              className="text-left py-2 px-3 rounded-lg hover:bg-slate-800"
+              onClick={() => handleNavClick('watch')}
+              className={`p-2.5 rounded-lg text-left flex items-center justify-between ${
+                currentTab === 'watch' ? 'bg-slate-800 text-[#10B981]' : 'text-slate-300'
+              }`}
             >
-              Case Studies & Portfolio
+              <span className="flex items-center gap-2">
+                <i className="fa-solid fa-list-check text-xs text-emerald-400"></i>
+                <span>Daily Tasks (₨ 100 / Task)</span>
+              </span>
+              <span className="text-[10px] text-emerald-400 font-mono">15s Timer</span>
             </button>
-            <button
-              onClick={() => handleNavClick('cost-estimator')}
-              className="text-left py-2 px-3 rounded-lg hover:bg-slate-800 text-yellow-400 font-bold flex items-center justify-between"
-            >
-              <span>Interactive Cost Estimator</span>
-              <Calculator className="w-4 h-4" />
-            </button>
-            <button
-              onClick={() => handleNavClick('pricing-packages')}
-              className="text-left py-2 px-3 rounded-lg hover:bg-slate-800"
-            >
-              Pricing & Packages
-            </button>
-            <button
-              onClick={() => handleNavClick('process-flow')}
-              className="text-left py-2 px-3 rounded-lg hover:bg-slate-800"
-            >
-              Work Process
-            </button>
-            <button
-              onClick={() => handleNavClick('team-about')}
-              className="text-left py-2 px-3 rounded-lg hover:bg-slate-800"
-            >
-              Team & About
-            </button>
-          </div>
 
-          <div className="pt-2 flex flex-col gap-2">
             <button
-              onClick={() => {
-                setMobileMenuOpen(false);
-                onOpenPortal();
-              }}
-              className="w-full py-3 rounded-xl bg-slate-800 text-yellow-300 border border-slate-700 font-bold flex items-center justify-center gap-2"
+              onClick={() => handleNavClick('plans')}
+              className={`p-2.5 rounded-lg text-left flex items-center justify-between ${
+                currentTab === 'plans' ? 'bg-amber-500/20 text-amber-300' : 'text-amber-400'
+              }`}
             >
-              <ShieldCheck className="w-4 h-4 text-red-400" />
-              <span>Client Portal & Project Tracker</span>
+              <span className="flex items-center gap-2">
+                <i className="fa-solid fa-crown text-xs text-amber-400"></i>
+                <span>Earning Plans (VIP Packages)</span>
+              </span>
+              <span className="text-[10px] bg-amber-500/20 text-amber-300 px-1.5 py-0.5 rounded font-bold border border-amber-500/30">
+                Up to ₨ 60,000/mo
+              </span>
             </button>
+
             <button
-              onClick={openWhatsApp}
-              className="w-full py-3 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold flex items-center justify-center gap-2"
+              onClick={() => handleNavClick('create')}
+              className={`p-2.5 rounded-lg text-left flex items-center justify-between ${
+                currentTab === 'create' ? 'bg-slate-800 text-[#06B6D4]' : 'text-slate-300'
+              }`}
             >
-              <MessageCircle className="w-4 h-4" />
-              <span>Direct WhatsApp Chat</span>
+              <span className="flex items-center gap-2">
+                <i className="fa-solid fa-bullhorn text-xs"></i>
+                <span>Post Your Ad (₨ 150)</span>
+              </span>
+              <span className="text-[10px] text-cyan-400">Market Rate</span>
             </button>
+
             <button
-              onClick={() => {
-                setMobileMenuOpen(false);
-                onOpenInquiry();
-              }}
-              className="w-full py-3 rounded-xl bg-gradient-to-r from-red-600 via-rose-600 to-amber-500 text-white font-extrabold flex items-center justify-center gap-2 shadow-lg shadow-red-600/30"
+              onClick={() => handleNavClick('auth')}
+              className={`p-2.5 rounded-lg text-left flex items-center justify-between ${
+                currentTab === 'auth' ? 'bg-slate-800 text-emerald-400' : 'text-slate-300'
+              }`}
             >
-              <Sparkles className="w-4 h-4 text-yellow-300" />
-              <span>Request Project Proposal</span>
+              <span className="flex items-center gap-2">
+                <i className="fa-solid fa-user-plus text-xs text-amber-400"></i>
+                <span>Login & Register Page</span>
+              </span>
+              <span className="text-[10px] bg-amber-500/20 text-amber-300 px-1.5 py-0.5 rounded font-bold border border-amber-500/30">
+                ₨ 50 Reward
+              </span>
             </button>
+
+            <button
+              onClick={() => handleNavClick('wallet')}
+              className={`p-2.5 rounded-lg text-left flex items-center justify-between ${
+                currentTab === 'wallet' ? 'bg-slate-800 text-[#10B981]' : 'text-slate-300'
+              }`}
+            >
+              <span className="flex items-center gap-2">
+                <i className="fa-solid fa-wallet text-xs"></i>
+                <span>Wallet & Transactions</span>
+              </span>
+              <span className="text-[10px] text-slate-400 font-mono">JazzCash</span>
+            </button>
+
+            <button
+              onClick={() => handleNavClick('referrals')}
+              className={`p-2.5 rounded-lg text-left flex items-center justify-between ${
+                currentTab === 'referrals' ? 'bg-slate-800 text-[#10B981]' : 'text-slate-300'
+              }`}
+            >
+              <span className="flex items-center gap-2">
+                <i className="fa-solid fa-users text-xs"></i>
+                <span>Referral Program</span>
+              </span>
+              <span className="text-[10px] text-slate-400">10% Commission</span>
+            </button>
+
+            <button
+              onClick={() => handleNavClick('admin')}
+              className={`p-2.5 rounded-lg text-left flex items-center justify-between ${
+                currentTab === 'admin' ? 'bg-amber-500/20 text-amber-400' : 'text-amber-400'
+              }`}
+            >
+              <span className="flex items-center gap-2">
+                <i className="fa-solid fa-shield-halved text-xs"></i>
+                <span>Admin Panel</span>
+              </span>
+              {pendingDepositsCount > 0 && (
+                <span className="text-[10px] bg-amber-500 text-slate-950 font-bold px-2 py-0.5 rounded-full">
+                  {pendingDepositsCount} Pending
+                </span>
+              )}
+            </button>
+
+            <button
+              onClick={() => { openMyAccountModal(); setMobileMenuOpen(false); }}
+              className="p-2.5 rounded-lg text-left flex items-center justify-between text-slate-300"
+            >
+              <span className="flex items-center gap-2">
+                <i className="fa-solid fa-circle-user text-xs text-emerald-400"></i>
+                <span>My Account ({currentUser.name})</span>
+              </span>
+              <span className="text-[10px] text-emerald-400">Verified</span>
+            </button>
+
+            {onLogout && (
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  onLogout();
+                }}
+                className="p-2.5 rounded-lg text-left flex items-center justify-between text-rose-400 hover:bg-rose-950/20"
+              >
+                <span className="flex items-center gap-2">
+                  <i className="fa-solid fa-arrow-right-from-bracket text-xs"></i>
+                  <span>Log Out (Switch Account)</span>
+                </span>
+              </button>
+            )}
           </div>
         </div>
       )}
-    </nav>
+
+    </header>
   );
 };

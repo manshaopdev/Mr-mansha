@@ -1,0 +1,148 @@
+[
+  {
+    "id": "conv_hamza",
+    "participantIds": [
+      "client_me",
+      "seller-1"
+    ],
+    "participants": [
+      {
+        "id": "seller-1",
+        "name": "Hamza Tariq",
+        "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+        "role": "seller",
+        "title": "Full-Stack Next.js & React Architect",
+        "rating": 4.9,
+        "level": "Level 2 Seller",
+        "responseTime": "1 Hour Avg Response",
+        "online": true
+      },
+      {
+        "id": "client_me",
+        "name": "You (Client)",
+        "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+        "role": "buyer",
+        "online": true
+      }
+    ],
+    "relatedGigId": "gig-1",
+    "relatedGigTitle": "Full-Stack Web App in Next.js 15, TypeScript & Tailwind CSS",
+    "lastMessage": {
+      "text": "Salam! Can you deliver this project in 3 days?",
+      "senderId": "client_me",
+      "senderName": "You (Client)",
+      "timestamp": "2026-09-19T09:19:38.960Z"
+    },
+    "updatedAt": "2026-09-19T09:19:38.960Z",
+    "unreadCount": 0
+  },
+  {
+    "id": "conv_daniyal",
+    "participantIds": [
+      "client_me",
+      "seller-3"
+    ],
+    "participants": [
+      {
+        "id": "seller-3",
+        "name": "Daniyal Khan",
+        "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
+        "role": "seller",
+        "title": "AI Engineer & Autonomous Agents Developer",
+        "rating": 5,
+        "level": "Top Rated Seller",
+        "responseTime": "30 Mins Avg Response",
+        "online": true
+      },
+      {
+        "id": "client_me",
+        "name": "You (Client)",
+        "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+        "role": "buyer",
+        "online": true
+      }
+    ],
+    "relatedGigId": "gig-3",
+    "relatedGigTitle": "Autonomous AI Agents, WhatsApp Bot & Custom LLM Automation",
+    "lastMessage": {
+      "text": "Hi! Looking for autonomous AI bots or custom LLM integration? Send your workflow details directly here.",
+      "senderId": "seller-3",
+      "senderName": "Daniyal Khan",
+      "timestamp": "2026-09-19T08:32:06.760Z"
+    },
+    "updatedAt": "2026-09-19T08:32:06.760Z",
+    "unreadCount": 0
+  },
+  {
+    "id": "conv_zainab",
+    "participantIds": [
+      "client_me",
+      "seller-2"
+    ],
+    "participants": [
+      {
+        "id": "seller-2",
+        "name": "Zainab Malik",
+        "avatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80",
+        "role": "seller",
+        "title": "Brand Identity & Minimalist Logo Designer",
+        "rating": 4.8,
+        "level": "Pro Verified",
+        "responseTime": "2 Hours Avg Response",
+        "online": false
+      },
+      {
+        "id": "client_me",
+        "name": "You (Client)",
+        "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+        "role": "buyer",
+        "online": true
+      }
+    ],
+    "relatedGigId": "gig-2",
+    "relatedGigTitle": "Luxury Brand Identity, Minimalist Logo & Complete Brand Guidelines",
+    "lastMessage": {
+      "text": "Hello! I can craft modern vector branding and Figma prototypes. Share your vision whenever you are ready.",
+      "senderId": "seller-2",
+      "senderName": "Zainab Malik",
+      "timestamp": "2026-09-19T07:17:06.760Z"
+    },
+    "updatedAt": "2026-09-19T07:17:06.760Z",
+    "unreadCount": 0
+  },
+  {
+    "id": "conv_support",
+    "participantIds": [
+      "client_me",
+      "support"
+    ],
+    "participants": [
+      {
+        "id": "support",
+        "name": "Figer Free Support",
+        "avatar": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80",
+        "role": "support",
+        "title": "24/7 Platform Concierge & Order Desk",
+        "rating": 5,
+        "level": "Official Support",
+        "responseTime": "Instant",
+        "online": true
+      },
+      {
+        "id": "client_me",
+        "name": "You (Client)",
+        "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+        "role": "buyer",
+        "online": true
+      }
+    ],
+    "lastMessage": {
+      "text": "Welcome to Figer Free! You can now chat directly with any freelancer or client on the website. No WhatsApp needed—everything is live and secure!",
+      "senderId": "support",
+      "senderName": "Figer Free Support",
+      "timestamp": "2026-09-19T09:12:06.760Z"
+    },
+    "updatedAt": "2026-09-19T09:12:06.760Z",
+    "unreadCount": 0
+  }
+]

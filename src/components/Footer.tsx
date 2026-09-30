@@ -1,264 +1,134 @@
 import React from 'react';
-import {
-  Sparkles,
-  MessageCircle,
-  Mail,
-  Phone,
-  ArrowUp,
-  Palette,
-  Code2,
-  TrendingUp,
-  Heart
-} from 'lucide-react';
-import { AGENCY_INFO, SERVICES_DATA } from '../data/agencyData';
 
 interface FooterProps {
-  onScrollTo: (id: string) => void;
-  onSelectService: (serviceId: string) => void;
+  onNavigate: (tab: 'watch' | 'plans' | 'create' | 'wallet' | 'referrals' | 'arbitrage' | 'auth') => void;
+  openDepositModal: () => void;
+  openWithdrawModal: () => void;
 }
 
-export const Footer: React.FC<FooterProps> = ({ onScrollTo, onSelectService }) => {
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const openWhatsApp = () => {
-    const text = encodeURIComponent('Hello Prime Plus Team! I would like to inquire about your digital agency services.');
-    window.open(`https://wa.me/${AGENCY_INFO.contacts.whatsapp.replace(/[^0-9]/g, '')}?text=${text}`, '_blank');
-  };
-
+export const Footer: React.FC<FooterProps> = ({
+  onNavigate,
+  openDepositModal,
+  openWithdrawModal
+}) => {
   return (
-    <footer className="bg-slate-950 border-t border-slate-800 text-slate-400 text-left pt-16 pb-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+    <footer className="bg-[#0b1120] border-t border-slate-800/80 text-slate-400 text-xs">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+          
           {/* Brand Col */}
-          <div className="lg:col-span-2 space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-red-600 via-amber-500 to-yellow-400 p-[1.5px]">
-                <div className="w-full h-full bg-slate-950 rounded-2xl flex items-center justify-center font-black text-white text-lg font-['Outfit',sans-serif]">
-                  P+
+          <div className="space-y-3">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-[#10B981] to-[#06B6D4] p-[1.5px]">
+                <div className="w-full h-full bg-[#0F172A] rounded-[6px] flex items-center justify-center">
+                  <i className="fa-solid fa-list-check text-[#10B981] text-xs pl-0.5"></i>
                 </div>
               </div>
-              <div>
-                <span className="font-extrabold text-xl tracking-tight text-white font-['Outfit',sans-serif]">
-                  PRIME PLUS TEAM
-                </span>
-                <p className="text-[11px] text-yellow-400 font-mono">
-                  Graphic Design • Web Development • Digital Marketing
-                </p>
-              </div>
+              <span className="text-base font-bold text-white tracking-tight">
+                AR <span className="text-[#10B981]">AdRewards</span>
+              </span>
             </div>
-
-            <p className="text-xs sm:text-sm text-slate-400 leading-relaxed max-w-sm">
-              Prime Plus Team is an elite multidisciplinary digital agency. We construct bold brand identities, engineer resilient web applications, and scale customer acquisition through data-backed performance marketing.
+            <p className="text-xs text-slate-400 leading-relaxed">
+              Pakistan's trusted daily tasks & video earning platform. Instant ₨ 100 per 15s task. Cashouts and deposits via official JazzCash (0326-2636289).
             </p>
-
-            <div className="flex items-center gap-3 pt-2">
-              <button
-                onClick={openWhatsApp}
-                className="px-4 py-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-xs font-bold transition-colors cursor-pointer flex items-center gap-1.5"
-              >
-                <MessageCircle className="w-3.5 h-3.5" />
-                <span>WhatsApp Hotline</span>
-              </button>
-
-              <button
-                onClick={() => onScrollTo('contact-inquiry')}
-                className="px-4 py-2 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white text-xs font-bold transition-colors cursor-pointer"
-              >
-                Send Request
-              </button>
-            </div>
           </div>
 
-          {/* Graphic Design Col */}
-          <div className="space-y-3">
-            <div className="flex items-center gap-1.5 text-red-400 font-bold text-xs uppercase font-mono tracking-wider">
-              <Palette className="w-3.5 h-3.5" />
-              <span>Graphic Design</span>
-            </div>
-            <ul className="space-y-2 text-xs text-slate-400">
+          {/* Earner Quick Links */}
+          <div className="space-y-2.5">
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-200">
+              For Earners
+            </h4>
+            <ul className="space-y-1.5 text-xs">
               <li>
-                <button
-                  onClick={() => onSelectService('graphic-design')}
-                  className="hover:text-slate-200 transition-colors text-left"
-                >
-                  Brand Identity & Logos
+                <button onClick={() => onNavigate('watch')} className="hover:text-emerald-400 transition-colors cursor-pointer">
+                  Daily Tasks (₨ 100/Task)
                 </button>
               </li>
               <li>
-                <button
-                  onClick={() => onSelectService('graphic-design')}
-                  className="hover:text-slate-200 transition-colors text-left"
-                >
-                  UI/UX Systems in Figma
+                <button onClick={() => onNavigate('plans')} className="hover:text-amber-400 text-amber-300 font-semibold transition-colors cursor-pointer">
+                  VIP Earning Plans
                 </button>
               </li>
               <li>
-                <button
-                  onClick={() => onSelectService('graphic-design')}
-                  className="hover:text-slate-200 transition-colors text-left"
-                >
-                  Social Media Creatives
+                <button onClick={openWithdrawModal} className="hover:text-emerald-400 transition-colors cursor-pointer">
+                  Withdraw to JazzCash (Min ₨ 500)
                 </button>
               </li>
               <li>
-                <button
-                  onClick={() => onSelectService('graphic-design')}
-                  className="hover:text-slate-200 transition-colors text-left"
-                >
-                  Product Packaging & 3D
+                <button onClick={() => onNavigate('referrals')} className="hover:text-emerald-400 transition-colors cursor-pointer">
+                  10% Lifetime Referral Program
                 </button>
               </li>
               <li>
-                <button
-                  onClick={() => onSelectService('graphic-design')}
-                  className="hover:text-slate-200 transition-colors text-left"
-                >
-                  Motion Graphics & Lottie
+                <button onClick={() => onNavigate('auth')} className="hover:text-amber-400 transition-colors cursor-pointer">
+                  Register Account (+₨ 50 Bonus)
                 </button>
               </li>
             </ul>
           </div>
 
-          {/* Web Development Col */}
-          <div className="space-y-3">
-            <div className="flex items-center gap-1.5 text-yellow-400 font-bold text-xs uppercase font-mono tracking-wider">
-              <Code2 className="w-3.5 h-3.5" />
-              <span>Web Development</span>
-            </div>
-            <ul className="space-y-2 text-xs text-slate-400">
+          {/* Advertiser Quick Links */}
+          <div className="space-y-2.5">
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-200">
+              For Advertisers
+            </h4>
+            <ul className="space-y-1.5 text-xs">
               <li>
-                <button
-                  onClick={() => onSelectService('web-development')}
-                  className="hover:text-slate-200 transition-colors text-left"
-                >
-                  React 19 & Next.js Portals
+                <button onClick={() => onNavigate('create')} className="hover:text-cyan-400 transition-colors cursor-pointer">
+                  Post New Ad (Start from 1 Ad @ ₨ 150)
                 </button>
               </li>
               <li>
-                <button
-                  onClick={() => onSelectService('web-development')}
-                  className="hover:text-slate-200 transition-colors text-left"
-                >
-                  Shopify & E-Commerce Stores
+                <button onClick={openDepositModal} className="hover:text-cyan-400 transition-colors cursor-pointer">
+                  Top-up via JazzCash 03262636289
                 </button>
               </li>
               <li>
-                <button
-                  onClick={() => onSelectService('web-development')}
-                  className="hover:text-slate-200 transition-colors text-left"
-                >
-                  Corporate CMS Websites
+                <button onClick={() => onNavigate('arbitrage')} className="hover:text-cyan-400 transition-colors cursor-pointer">
+                  Platform Margin & Economics
                 </button>
               </li>
               <li>
-                <button
-                  onClick={() => onSelectService('web-development')}
-                  className="hover:text-slate-200 transition-colors text-left"
-                >
-                  REST APIs & Node Backends
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => onSelectService('web-development')}
-                  className="hover:text-slate-200 transition-colors text-left"
-                >
-                  Core Web Vitals & Speed Tuning
-                </button>
+                <span className="text-slate-500">YouTube, TikTok & App Promotion</span>
               </li>
             </ul>
           </div>
 
-          {/* Digital Marketing Col */}
-          <div className="space-y-3">
-            <div className="flex items-center gap-1.5 text-amber-400 font-bold text-xs uppercase font-mono tracking-wider">
-              <TrendingUp className="w-3.5 h-3.5" />
-              <span>Digital Marketing</span>
+          {/* Compliance & Payment Partners */}
+          <div className="space-y-2.5">
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-200">
+              Payment Gateways
+            </h4>
+            <div className="flex flex-wrap gap-2 text-xs">
+              <span className="px-2.5 py-1 rounded bg-rose-950/80 border border-rose-500 text-rose-300 font-bold flex items-center gap-1.5">
+                <i className="fa-solid fa-bolt text-rose-400"></i>
+                <span>JazzCash: 0326-2636289 (Active)</span>
+              </span>
+              <span className="px-2.5 py-1 rounded bg-slate-950 border border-slate-800 text-slate-500 font-medium">
+                Easypaisa (Coming Soon)
+              </span>
+              <span className="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 text-slate-300 font-medium">
+                Bank Transfer
+              </span>
             </div>
-            <ul className="space-y-2 text-xs text-slate-400">
-              <li>
-                <button
-                  onClick={() => onSelectService('digital-marketing')}
-                  className="hover:text-slate-200 transition-colors text-left"
-                >
-                  Meta Ads (FB & IG) CAPI
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => onSelectService('digital-marketing')}
-                  className="hover:text-slate-200 transition-colors text-left"
-                >
-                  Google Ads (PMax & Search)
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => onSelectService('digital-marketing')}
-                  className="hover:text-slate-200 transition-colors text-left"
-                >
-                  Technical & Local SEO
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => onSelectService('digital-marketing')}
-                  className="hover:text-slate-200 transition-colors text-left"
-                >
-                  Social Media Management (SMM)
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => onSelectService('digital-marketing')}
-                  className="hover:text-slate-200 transition-colors text-left"
-                >
-                  Klaviyo Email Automation
-                </button>
-              </li>
-            </ul>
+            <p className="text-[11px] text-slate-400 pt-1">
+              Easypaisa is not available yet (baad me add hoga). Send all deposits & plan payments to JazzCash <strong>03262636289</strong>.
+            </p>
           </div>
+
         </div>
 
-        {/* Bottom Bar with Back to Top */}
-        <div className="pt-8 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
-          <div className="flex items-center gap-2 text-slate-400">
-            <span>© {new Date().getFullYear()} Prime Plus Team. All Rights Reserved.</span>
-            <span className="hidden sm:inline">•</span>
-            <span className="hidden sm:inline font-mono text-slate-500">
-              Crafted with Precision for Global Growth
-            </span>
+        <div className="pt-8 border-t border-slate-800/60 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-slate-500">
+          <div>
+            © {new Date().getFullYear()} AR AdRewards Pakistan. All rights reserved.
           </div>
-
           <div className="flex items-center gap-4">
-            <button
-              onClick={() => onScrollTo('cost-estimator')}
-              className="hover:text-slate-200 text-yellow-400 font-mono"
-            >
-              Calculator
-            </button>
-            <button
-              onClick={() => onScrollTo('case-studies')}
-              className="hover:text-slate-200"
-            >
-              Portfolio
-            </button>
-            <button
-              onClick={() => onScrollTo('pricing-packages')}
-              className="hover:text-slate-200"
-            >
-              Pricing
-            </button>
-            <button
-              onClick={scrollToTop}
-              className="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 transition-colors cursor-pointer flex items-center gap-1 font-mono text-[11px]"
-              title="Back to Top"
-            >
-              <ArrowUp className="w-3.5 h-3.5" />
-              <span>Top</span>
-            </button>
+            <span className="flex items-center gap-1.5 text-emerald-400">
+              <i className="fa-solid fa-shield-check"></i>
+              <span>Anti-Bot Math Verification Active</span>
+            </span>
+            <span>·</span>
+            <span className="text-amber-400">JazzCash Gateway: 0326-2636289</span>
           </div>
         </div>
       </div>

@@ -1,0 +1,83 @@
+[
+  {
+    "id": "msg_seed_1",
+    "conversationId": "conv_hamza",
+    "senderId": "seller-1",
+    "senderName": "Hamza Tariq",
+    "senderAvatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+    "recipientId": "client_me",
+    "recipientName": "You (Client)",
+    "text": "Salam! Welcome to Figer Free. Feel free to discuss your website or web app requirements right here in the chat!",
+    "timestamp": "2026-09-19T09:02:06.760Z",
+    "read": true,
+    "gigAttachment": {
+      "id": "gig-1",
+      "title": "Full-Stack Web App in Next.js 15, TypeScript & Tailwind CSS",
+      "pricePkr": 25000,
+      "priceUsd": 120,
+      "tier": "Standard"
+    }
+  },
+  {
+    "id": "msg_seed_2",
+    "conversationId": "conv_daniyal",
+    "senderId": "seller-3",
+    "senderName": "Daniyal Khan",
+    "senderAvatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
+    "recipientId": "client_me",
+    "recipientName": "You (Client)",
+    "text": "Hi! Looking for autonomous AI bots or custom LLM integration? Send your workflow details directly here.",
+    "timestamp": "2026-09-19T08:32:06.760Z",
+    "read": true,
+    "gigAttachment": {
+      "id": "gig-3",
+      "title": "Autonomous AI Agents, WhatsApp Bot & Custom LLM Automation",
+      "pricePkr": 35000,
+      "priceUsd": 150,
+      "tier": "Basic"
+    }
+  },
+  {
+    "id": "msg_seed_3",
+    "conversationId": "conv_zainab",
+    "senderId": "seller-2",
+    "senderName": "Zainab Malik",
+    "senderAvatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80",
+    "recipientId": "client_me",
+    "recipientName": "You (Client)",
+    "text": "Hello! I can craft modern vector branding and Figma prototypes. Share your vision whenever you are ready.",
+    "timestamp": "2026-09-19T07:17:06.760Z",
+    "read": true,
+    "gigAttachment": {
+      "id": "gig-2",
+      "title": "Luxury Brand Identity, Minimalist Logo & Complete Brand Guidelines",
+      "pricePkr": 15000,
+      "priceUsd": 65,
+      "tier": "Basic"
+    }
+  },
+  {
+    "id": "msg_seed_4",
+    "conversationId": "conv_support",
+    "senderId": "support",
+    "senderName": "Figer Free Support",
+    "senderAvatar": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80",
+    "recipientId": "client_me",
+    "recipientName": "You (Client)",
+    "text": "Welcome to Figer Free! You can now chat directly with any freelancer or client on the website. No WhatsApp needed—everything is live and secure!",
+    "timestamp": "2026-09-19T09:12:06.760Z",
+    "read": true
+  },
+  {
+    "id": "msg_mu86etowpx2do",
+    "conversationId": "conv_hamza",
+    "senderId": "client_me",
+    "senderName": "You (Client)",
+    "senderAvatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    "recipientId": "seller-1",
+    "recipientName": "Hamza Tariq",
+    "text": "Salam! Can you deliver this project in 3 days?",
+    "timestamp": "2026-09-19T09:19:38.960Z",
+    "read": true
+  }
+]

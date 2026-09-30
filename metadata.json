@@ -1,6 +1,6 @@
 {
-  "name": "Prime Plus Team - Digital Agency",
-  "description": "Comprehensive agency website for Prime Plus Team offering Graphic Design, Web Development, and Digital Marketing solutions with detailed service breakdowns, portfolio showcases, and project estimator.",
+  "name": "AR AdRewards",
+  "description": "Earn real Pakistani Rupees (₨ PKR) watching 15-second ads, promote YouTube channels and businesses, with instant Easypaisa and JazzCash payouts.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
