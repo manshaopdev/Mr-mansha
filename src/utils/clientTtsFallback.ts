@@ -23,12 +23,7 @@ export async function generateClientSpeechAudio(
   // Sample Rate: 24kHz matches standard TTS
   const sampleRate = 24000;
   const totalSamples = Math.floor(sampleRate * durationSec);
-  const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)({
-    sampleRate
-  });
-
-  const buffer = audioContext.createBuffer(1, totalSamples, sampleRate);
-  const channelData = buffer.getChannelData(0);
+  const channelData = new Float32Array(totalSamples);
 
   // Determine base voice pitch frequency
   const baseFreq = persona.gender === 'male' ? (persona.id === 'chaudhry_elder' ? 110 : 135) : 225;
@@ -60,32 +55,44 @@ export async function generateClientSpeechAudio(
     channelData[i] = (fundamental + formant1 + formant2 + breath) * smoothEnvelope * fade * 0.45;
   }
 
-  // Convert AudioBuffer to 16-bit PCM WAV
-  const wavBytes = audioBufferToWav(buffer);
+  // Convert Float32 samples directly to 16-bit PCM WAV
+  const wavBytes = float32ToWav(channelData, sampleRate);
   
-  // Encode to genuine MP3 using lamejs
-  const { mp3Blob, mp3DataUrl } = convertWavToMp3(wavBytes);
-  const audioUrl = URL.createObjectURL(mp3Blob);
+  // Encode to genuine MP3 using lamejs with safe fallback
+  let audioUrl = '';
+  let mp3DataUrl = '';
+  try {
+    const { mp3Blob, mp3DataUrl: encodedUrl } = convertWavToMp3(wavBytes);
+    audioUrl = URL.createObjectURL(mp3Blob);
+    mp3DataUrl = encodedUrl;
+  } catch (err) {
+    console.warn('[Fallback to direct WAV Blob]:', err);
+    const wavBlob = new Blob([wavBytes], { type: 'audio/wav' });
+    audioUrl = URL.createObjectURL(wavBlob);
+    mp3DataUrl = audioUrl;
+  }
 
   // Also trigger browser Web Speech synthesis for simultaneous speech playback
   try {
-    if ('speechSynthesis' in window) {
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.rate = Math.max(0.5, Math.min(2.0, speed));
       utterance.pitch = Math.max(0.5, Math.min(1.5, pitch));
       
       const voices = window.speechSynthesis.getVoices();
-      // Look for Urdu, Hindi, or South Asian English voices
-      const urduVoice = voices.find(v => 
-        v.lang.includes('ur') || 
-        v.lang.includes('PK') || 
-        v.name.toLowerCase().includes('pakistan') || 
-        v.name.toLowerCase().includes('urdu')
-      ) || voices.find(v => v.lang.includes('hi') || v.lang.includes('IN')) || voices[0];
+      if (voices && voices.length > 0) {
+        // Look for Urdu, Hindi, or South Asian English voices
+        const urduVoice = voices.find(v => 
+          v.lang.toLowerCase().includes('ur') || 
+          v.lang.includes('PK') || 
+          v.name.toLowerCase().includes('pakistan') || 
+          v.name.toLowerCase().includes('urdu')
+        ) || voices.find(v => v.lang.toLowerCase().includes('hi') || v.lang.includes('IN')) || voices[0];
 
-      if (urduVoice) {
-        utterance.voice = urduVoice;
+        if (urduVoice) {
+          utterance.voice = urduVoice;
+        }
       }
       window.speechSynthesis.speak(utterance);
     }
@@ -101,14 +108,12 @@ export async function generateClientSpeechAudio(
 }
 
 /**
- * Converts AudioBuffer to standard 16-bit Mono WAV Uint8Array
+ * Converts Float32Array to standard 16-bit Mono WAV Uint8Array
  */
-function audioBufferToWav(buffer: AudioBuffer): Uint8Array {
+function float32ToWav(samples: Float32Array, sampleRate: number): Uint8Array {
   const numChannels = 1;
-  const sampleRate = buffer.sampleRate;
   const format = 1; // PCM
   const bitDepth = 16;
-  const samples = buffer.getChannelData(0);
   const dataLength = samples.length * 2;
   const bufferLength = 44 + dataLength;
 

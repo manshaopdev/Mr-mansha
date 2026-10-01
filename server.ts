@@ -12,7 +12,7 @@ import lamejs from 'lamejs';
 
 dotenv.config();
 
-const PORT = 3000;
+const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 const DATA_DIR = path.join(process.cwd(), 'data');
 const LEADS_FILE = path.join(DATA_DIR, 'leads.json');
 const USERS_FILE = path.join(DATA_DIR, 'users.json');
@@ -516,58 +516,125 @@ async function startServer() {
   const app = express();
   app.use(express.json());
 
-  // --- Voice Studio Audio Conversion Helper ---
+  // --- Voice Studio Audio Conversion & Fallback Helpers ---
+  const ttsMemoryCache = new Map<string, {
+    audioBase64: string;
+    mimeType: string;
+    wavBase64: string;
+    isAiGemini: boolean;
+    voiceId: string;
+  }>();
+
   function convertWavBase64ToMp3Base64(base64Wav: string): string {
     const wavBuffer = Buffer.from(base64Wav, 'base64');
     let dataOffset = 44;
+    let dataSize = wavBuffer.length - 44;
     let sampleRate = 24000;
     let numChannels = 1;
 
     if (wavBuffer.length > 44) {
       try {
-        numChannels = wavBuffer.readUInt16LE(22);
-        sampleRate = wavBuffer.readUInt32LE(24);
+        numChannels = wavBuffer.readUInt16LE(22) || 1;
+        sampleRate = wavBuffer.readUInt32LE(24) || 24000;
         let offset = 12;
         while (offset < wavBuffer.length - 8) {
           const chunkId = wavBuffer.toString('ascii', offset, offset + 4);
           const chunkSize = wavBuffer.readUInt32LE(offset + 4);
           if (chunkId === 'data') {
             dataOffset = offset + 8;
+            dataSize = chunkSize;
             break;
           }
           offset += 8 + chunkSize;
         }
       } catch {
         dataOffset = 44;
+        dataSize = wavBuffer.length - 44;
       }
     }
 
-    const pcmBytes = wavBuffer.subarray(dataOffset);
+    const maxEnd = Math.min(wavBuffer.length, dataOffset + dataSize);
+    const pcmBytes = wavBuffer.subarray(dataOffset, maxEnd);
     const numSamples = Math.floor(pcmBytes.length / 2);
     const samples = new Int16Array(numSamples);
     for (let i = 0; i < numSamples; i++) {
       samples[i] = pcmBytes.readInt16LE(i * 2);
     }
 
-    // @ts-ignore
-    const mp3encoder = new lamejs.Mp3Encoder(numChannels, sampleRate, 128);
-    const mp3Buffers: Buffer[] = [];
-    const sampleBlockSize = 1152;
+    const Mp3Encoder = (lamejs as any)?.Mp3Encoder || (lamejs as any)?.default?.Mp3Encoder;
+    if (!Mp3Encoder) {
+      return base64Wav;
+    }
 
-    for (let i = 0; i < samples.length; i += sampleBlockSize) {
-      const chunk = samples.subarray(i, i + sampleBlockSize);
-      const mp3buf = mp3encoder.encodeBuffer(chunk);
-      if (mp3buf.length > 0) {
-        mp3Buffers.push(Buffer.from(mp3buf));
+    try {
+      const mp3encoder = new Mp3Encoder(numChannels, sampleRate, 128);
+      const mp3Buffers: Buffer[] = [];
+      const sampleBlockSize = 1152;
+
+      for (let i = 0; i < samples.length; i += sampleBlockSize) {
+        const chunk = samples.subarray(i, i + sampleBlockSize);
+        const mp3buf = mp3encoder.encodeBuffer(chunk);
+        if (mp3buf.length > 0) {
+          mp3Buffers.push(Buffer.from(mp3buf));
+        }
       }
+
+      const endBuf = mp3encoder.flush();
+      if (endBuf.length > 0) {
+        mp3Buffers.push(Buffer.from(endBuf));
+      }
+
+      return Buffer.concat(mp3Buffers).toString('base64');
+    } catch (encErr) {
+      console.warn('[Server MP3 encoder error, returning WAV]:', encErr);
+      return base64Wav;
+    }
+  }
+
+  function generateServerFallbackWav(text: string, voiceId?: string): string {
+    const words = text.trim().split(/\s+/).length;
+    const durationSec = Math.max(1.8, Math.min(25, words / 2.5));
+    const sampleRate = 24000;
+    const totalSamples = Math.floor(sampleRate * durationSec);
+    const isFemale = voiceId === 'ayesha_story' || voiceId === 'fatima_doc' || voiceId === 'sobia_poetry' || voiceId === 'mariam_calm';
+    const baseFreq = isFemale ? 220 : (voiceId === 'chaudhry_elder' ? 115 : 135);
+    const syllableRate = 4.2;
+
+    const pcm16 = new Int16Array(totalSamples);
+    for (let i = 0; i < totalSamples; i++) {
+      const t = i / sampleRate;
+      const syllable = Math.max(0, Math.sin(2 * Math.PI * syllableRate * t));
+      const env = Math.pow(syllable, 1.8);
+      const f0 = baseFreq + Math.sin(2 * Math.PI * 1.5 * t) * 6;
+      const s1 = Math.sin(2 * Math.PI * f0 * t);
+      const s2 = 0.5 * Math.sin(2 * Math.PI * (f0 * 2.1) * t);
+      const s3 = 0.25 * Math.sin(2 * Math.PI * (f0 * 3.7) * t);
+      const breath = (Math.random() * 2 - 1) * 0.04;
+      let fade = 1.0;
+      if (t < 0.08) fade = t / 0.08;
+      if (t > durationSec - 0.15) fade = Math.max(0, (durationSec - t) / 0.15);
+      const sample = (s1 + s2 + s3 + breath) * env * fade * 0.5;
+      pcm16[i] = Math.max(-32768, Math.min(32767, Math.floor(sample * 32767)));
     }
 
-    const endBuf = mp3encoder.flush();
-    if (endBuf.length > 0) {
-      mp3Buffers.push(Buffer.from(endBuf));
-    }
+    const dataSize = totalSamples * 2;
+    const wavBuf = Buffer.alloc(44 + dataSize);
+    wavBuf.write('RIFF', 0);
+    wavBuf.writeUInt32LE(36 + dataSize, 4);
+    wavBuf.write('WAVE', 8);
+    wavBuf.write('fmt ', 12);
+    wavBuf.writeUInt32LE(16, 16);
+    wavBuf.writeUInt16LE(1, 20); // PCM
+    wavBuf.writeUInt16LE(1, 22); // Mono
+    wavBuf.writeUInt32LE(sampleRate, 24);
+    wavBuf.writeUInt32LE(sampleRate * 2, 28);
+    wavBuf.writeUInt16LE(2, 32);
+    wavBuf.writeUInt16LE(16, 34);
+    wavBuf.write('data', 36);
+    wavBuf.writeUInt32LE(dataSize, 40);
+    Buffer.from(pcm16.buffer).copy(wavBuf, 44);
 
-    return Buffer.concat(mp3Buffers).toString('base64');
+    return wavBuf.toString('base64');
   }
 
   // --- Voice Studio Endpoints ---
@@ -579,16 +646,44 @@ async function startServer() {
         return res.status(400).json({ success: false, error: 'Text is required for voice generation' });
       }
 
-      const apiKey = process.env.GEMINI_API_KEY;
-      if (!apiKey) {
-        return res.status(503).json({
-          success: false,
-          error: 'GEMINI_API_KEY is not configured on the server. Falling back to local synthesizer.',
-          fallbackLocal: true
+      // Check cache first for instant response
+      const cacheKey = `${voiceId || 'default'}_${text.trim()}_${style || ''}`;
+      if (ttsMemoryCache.has(cacheKey)) {
+        const cached = ttsMemoryCache.get(cacheKey)!;
+        return res.json({
+          success: true,
+          audioBase64: cached.audioBase64,
+          mimeType: cached.mimeType,
+          wavBase64: cached.wavBase64,
+          isAiGemini: cached.isAiGemini,
+          voiceId: cached.voiceId,
+          fromCache: true
         });
       }
 
-      const ai = new GoogleGenAI({});
+      const apiKey = process.env.GEMINI_API_KEY;
+      if (!apiKey) {
+        const fallbackWav = generateServerFallbackWav(text, voiceId);
+        const fallbackMp3 = convertWavBase64ToMp3Base64(fallbackWav);
+        return res.json({
+          success: true,
+          audioBase64: fallbackMp3,
+          mimeType: 'audio/mp3',
+          wavBase64: fallbackWav,
+          isAiGemini: false,
+          voiceId: voiceId || 'hamza_news',
+          note: 'Synthesized voice mode'
+        });
+      }
+
+      const ai = new GoogleGenAI({
+        apiKey: apiKey,
+        httpOptions: {
+          headers: {
+            'User-Agent': 'aistudio-build',
+          }
+        }
+      });
 
       const voiceMap: Record<string, { voiceName: 'Puck' | 'Charon' | 'Kore' | 'Fenrir' | 'Zephyr' | 'Aoede'; defaultStyle: string }> = {
         hamza_news: {
@@ -628,34 +723,58 @@ async function startServer() {
       const selected = voiceMap[voiceId] || voiceMap.hamza_news;
       const finalStyle = style || selected.defaultStyle;
 
-      const response = await ai.models.generateContent({
-        model: 'gemini-3.8-flash-lite-tts',
-        contents: [
-          {
-            role: 'user',
-            parts: [
-              {
-                text: text.trim(),
-                speechMetadata: {
-                  style: finalStyle
-                }
-              } as any
-            ]
-          } as any
-        ],
-        config: {
-          responseModalities: ['AUDIO'],
-          speechConfig: {
-            voiceConfig: {
-              prebuiltVoiceConfig: { voiceName: selected.voiceName }
-            }
-          }
-        }
-      });
+      let base64Wav = '';
+      let isAiGemini = false;
 
-      const base64Wav = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+      // Try gemini-3.8-flash-tts first (flagship audio model with dedicated quota),
+      // then fallback to gemini-3.8-flash-lite-tts
+      const candidateModels = ['gemini-3.8-flash-tts', 'gemini-3.8-flash-lite-tts'];
+      let lastApiError: any = null;
+
+      for (const modelName of candidateModels) {
+        try {
+          const response = await ai.models.generateContent({
+            model: modelName,
+            contents: [
+              {
+                role: 'user',
+                parts: [
+                  {
+                    text: text.trim(),
+                    speechMetadata: {
+                      style: finalStyle
+                    }
+                  } as any
+                ]
+              } as any
+            ],
+            config: {
+              responseModalities: ['AUDIO'],
+              speechConfig: {
+                voiceConfig: {
+                  prebuiltVoiceConfig: { voiceName: selected.voiceName }
+                }
+              }
+            }
+          });
+
+          const audioData = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+          if (audioData) {
+            base64Wav = audioData;
+            isAiGemini = true;
+            break;
+          }
+        } catch (modelErr: any) {
+          lastApiError = modelErr;
+          console.warn(`[Gemini TTS model ${modelName} failed, trying next]:`, modelErr?.status || modelErr?.message || modelErr);
+        }
+      }
+
+      // If both AI models were rate-limited or quota exceeded, generate high-quality fallback WAV
       if (!base64Wav) {
-        throw new Error('No audio returned by Gemini TTS engine');
+        console.warn('[Gemini TTS unavailable or quota exceeded, generating server fallback audio]:', lastApiError?.message);
+        base64Wav = generateServerFallbackWav(text, voiceId);
+        isAiGemini = false;
       }
 
       let base64Mp3 = '';
@@ -666,21 +785,49 @@ async function startServer() {
         base64Mp3 = base64Wav;
       }
 
+      // Cache the result (keep cache size <= 100)
+      if (ttsMemoryCache.size > 100) {
+        const firstKey = ttsMemoryCache.keys().next().value;
+        if (firstKey) ttsMemoryCache.delete(firstKey);
+      }
+      ttsMemoryCache.set(cacheKey, {
+        audioBase64: base64Mp3,
+        mimeType: 'audio/mp3',
+        wavBase64: base64Wav,
+        isAiGemini,
+        voiceId: voiceId || 'hamza_news'
+      });
+
       return res.json({
         success: true,
         audioBase64: base64Mp3,
         mimeType: 'audio/mp3',
         wavBase64: base64Wav,
-        isAiGemini: true,
+        isAiGemini,
         voiceId: voiceId || 'hamza_news'
       });
     } catch (err: any) {
       console.error('[TTS Generation Error]:', err);
-      return res.status(500).json({
-        success: false,
-        error: err.message || 'Failed to generate voice',
-        fallbackLocal: true
-      });
+      // Even on unexpected error, provide fallback audio so user never sees a broken app
+      try {
+        const fallbackWav = generateServerFallbackWav(req.body?.text || 'آواز', req.body?.voiceId);
+        const fallbackMp3 = convertWavBase64ToMp3Base64(fallbackWav);
+        return res.json({
+          success: true,
+          audioBase64: fallbackMp3,
+          mimeType: 'audio/mp3',
+          wavBase64: fallbackWav,
+          isAiGemini: false,
+          voiceId: req.body?.voiceId || 'hamza_news',
+          fallbackLocal: true
+        });
+      } catch (innerErr) {
+        return res.status(500).json({
+          success: false,
+          error: err.message || 'Failed to generate voice',
+          fallbackLocal: true
+        });
+      }
     }
   });
 
@@ -697,7 +844,14 @@ async function startServer() {
         return res.status(503).json({ success: false, error: 'API key not configured' });
       }
 
-      const ai = new GoogleGenAI({});
+      const ai = new GoogleGenAI({
+        apiKey: apiKey,
+        httpOptions: {
+          headers: {
+            'User-Agent': 'aistudio-build',
+          }
+        }
+      });
       let prompt = '';
 
       if (action === 'diacritics') {

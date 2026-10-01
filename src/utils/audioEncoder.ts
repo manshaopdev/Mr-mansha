@@ -57,45 +57,57 @@ export function convertWavToMp3(wavBuffer: ArrayBuffer | Uint8Array): {
     }
   }
 
-  // Encode with lamejs
-  const channels = Math.min(Math.max(numChannels, 1), 2);
-  const kbps = 128; // High quality MP3 bitrate
-  // @ts-ignore
-  const mp3encoder = new lamejs.Mp3Encoder(channels, sampleRate, kbps);
+  // Encode with lamejs safely
+  const Mp3EncoderClass = (lamejs as any)?.Mp3Encoder || (lamejs as any)?.default?.Mp3Encoder;
+  if (!Mp3EncoderClass) {
+    console.warn('[AudioEncoder] lamejs Mp3Encoder unavailable, fallback to WAV blob');
+    const fallbackBlob = new Blob([uint8Array], { type: 'audio/wav' });
+    return { mp3Blob: fallbackBlob, mp3DataUrl: URL.createObjectURL(fallbackBlob) };
+  }
 
-  const mp3Chunks: Uint8Array[] = [];
-  const sampleBlockSize = 1152; // LAME standard frame size
+  try {
+    const channels = Math.min(Math.max(numChannels, 1), 2);
+    const kbps = 128; // High quality MP3 bitrate
+    const mp3encoder = new Mp3EncoderClass(channels, sampleRate, kbps);
 
-  for (let i = 0; i < samples.length; i += sampleBlockSize) {
-    const sampleChunk = samples.subarray(i, i + sampleBlockSize);
-    let mp3buf: Int8Array;
-    if (channels === 2) {
-      // De-interleave if stereo
-      const left = new Int16Array(sampleChunk.length / 2);
-      const right = new Int16Array(sampleChunk.length / 2);
-      for (let j = 0; j < sampleChunk.length / 2; j++) {
-        left[j] = sampleChunk[j * 2];
-        right[j] = sampleChunk[j * 2 + 1];
+    const mp3Chunks: Uint8Array[] = [];
+    const sampleBlockSize = 1152; // LAME standard frame size
+
+    for (let i = 0; i < samples.length; i += sampleBlockSize) {
+      const sampleChunk = samples.subarray(i, i + sampleBlockSize);
+      let mp3buf: Int8Array;
+      if (channels === 2) {
+        // De-interleave if stereo
+        const left = new Int16Array(sampleChunk.length / 2);
+        const right = new Int16Array(sampleChunk.length / 2);
+        for (let j = 0; j < sampleChunk.length / 2; j++) {
+          left[j] = sampleChunk[j * 2];
+          right[j] = sampleChunk[j * 2 + 1];
+        }
+        mp3buf = mp3encoder.encodeBuffer(left, right);
+      } else {
+        mp3buf = mp3encoder.encodeBuffer(sampleChunk);
       }
-      mp3buf = mp3encoder.encodeBuffer(left, right);
-    } else {
-      mp3buf = mp3encoder.encodeBuffer(sampleChunk);
+
+      if (mp3buf.length > 0) {
+        mp3Chunks.push(new Uint8Array(mp3buf.buffer, mp3buf.byteOffset, mp3buf.length));
+      }
     }
 
-    if (mp3buf.length > 0) {
-      mp3Chunks.push(new Uint8Array(mp3buf.buffer, mp3buf.byteOffset, mp3buf.length));
+    const endBuf: Int8Array = mp3encoder.flush();
+    if (endBuf.length > 0) {
+      mp3Chunks.push(new Uint8Array(endBuf.buffer, endBuf.byteOffset, endBuf.length));
     }
+
+    const mp3Blob = new Blob(mp3Chunks as any, { type: 'audio/mp3' });
+    const mp3DataUrl = URL.createObjectURL(mp3Blob);
+
+    return { mp3Blob, mp3DataUrl };
+  } catch (encErr) {
+    console.warn('[AudioEncoder] MP3 encoding error, returning WAV fallback:', encErr);
+    const fallbackBlob = new Blob([uint8Array], { type: 'audio/wav' });
+    return { mp3Blob: fallbackBlob, mp3DataUrl: URL.createObjectURL(fallbackBlob) };
   }
-
-  const endBuf: Int8Array = mp3encoder.flush();
-  if (endBuf.length > 0) {
-    mp3Chunks.push(new Uint8Array(endBuf.buffer, endBuf.byteOffset, endBuf.length));
-  }
-
-  const mp3Blob = new Blob(mp3Chunks as any, { type: 'audio/mp3' });
-  const mp3DataUrl = URL.createObjectURL(mp3Blob);
-
-  return { mp3Blob, mp3DataUrl };
 }
 
 /**
