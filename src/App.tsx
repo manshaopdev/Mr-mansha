@@ -152,6 +152,13 @@ export function App() {
 
     setIsGenerating(true);
 
+    // Unlock browser audio context & speech engine on direct user interaction
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      try {
+        window.speechSynthesis.resume();
+      } catch {}
+    }
+
     try {
       let audioResult: {
         audioUrl: string;
@@ -162,6 +169,7 @@ export function App() {
       };
 
       // Try server-side Gemini 3.8 TTS first
+      let serverSuccess = false;
       try {
         const res = await fetch('/api/tts/generate', {
           method: 'POST',
@@ -175,24 +183,28 @@ export function App() {
           })
         });
 
-        const data = await res.json();
-        if (data.success && data.audioBase64) {
-          const mp3DataUrl = `data:audio/mp3;base64,${data.audioBase64}`;
-          const wavDataUrl = data.wavBase64 ? `data:audio/wav;base64,${data.wavBase64}` : undefined;
-          
-          audioResult = {
-            audioUrl: mp3DataUrl,
-            mp3DataUrl,
-            wavDataUrl,
-            durationSec: Math.max(2, (text.trim().split(/\s+/).length / 2.6)),
-            isAiGemini: true
-          };
-        } else {
-          throw new Error(data.error || 'Server returned fallback');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success && data.audioBase64 && data.isAiGemini) {
+            const mp3DataUrl = `data:audio/mp3;base64,${data.audioBase64}`;
+            const wavDataUrl = data.wavBase64 ? `data:audio/wav;base64,${data.wavBase64}` : undefined;
+            
+            audioResult = {
+              audioUrl: mp3DataUrl,
+              mp3DataUrl,
+              wavDataUrl,
+              durationSec: Math.max(2, (text.trim().split(/\s+/).length / 2.6)),
+              isAiGemini: true
+            };
+            serverSuccess = true;
+          }
         }
       } catch (serverErr) {
-        console.warn('Server TTS failed or unconfigured, utilizing high-quality client synthesizer:', serverErr);
-        // Fallback to client audio synthesizer
+        console.warn('Server TTS not reachable, switching to client speech engine:', serverErr);
+      }
+
+      // If server TTS was unavailable or in fallback mode (e.g. GitHub Pages or quota)
+      if (!serverSuccess) {
         const clientAudio = await generateClientSpeechAudio(
           text.trim(),
           selectedPersona,

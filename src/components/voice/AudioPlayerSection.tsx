@@ -43,62 +43,34 @@ export const AudioPlayerSection: React.FC<AudioPlayerSectionProps> = ({
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const animationFrameRef = useRef<number | null>(null);
+  const speechTimerRef = useRef<any>(null);
 
-  // Helper to speak via native browser Web Speech API for fallback voice
-  const speakNative = (textToSpeak: string) => {
-    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
-    try {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(textToSpeak);
-      utterance.lang = 'ur-PK';
-      utterance.rate = Math.max(0.6, Math.min(1.8, currentAudio?.speed || 1.0));
-      utterance.pitch = Math.max(0.6, Math.min(1.4, currentAudio?.pitch || 1.0));
-      utterance.volume = isMuted ? 0 : volume;
-
-      const voices = window.speechSynthesis.getVoices();
-      if (voices && voices.length > 0) {
-        const urduVoice = voices.find(v => 
-          v.lang.toLowerCase().startsWith('ur') || 
-          v.lang.toLowerCase().includes('pk') || 
-          v.name.toLowerCase().includes('pakistan') || 
-          v.name.toLowerCase().includes('urdu')
-        ) || voices.find(v => 
-          v.lang.toLowerCase().startsWith('hi') || 
-          v.name.toLowerCase().includes('hindi')
-        ) || voices.find(v => 
-          v.lang.toLowerCase().includes('in')
-        );
-
-        if (urduVoice) {
-          utterance.voice = urduVoice;
-          utterance.lang = urduVoice.lang;
-        }
-      }
-
-      utterance.onboundary = (event) => {
-        if (event.charIndex && textToSpeak.length > 0) {
-          const ratio = event.charIndex / textToSpeak.length;
-          setCurrentTime(ratio * (duration || 5));
-        }
-      };
-
-      utterance.onend = () => {
-        setIsPlaying(false);
-        setCurrentTime(0);
-      };
-
-      utterance.onerror = (e) => {
-        console.warn('Native speech synthesis error:', e);
-      };
-
-      window.speechSynthesis.speak(utterance);
-    } catch (e) {
-      console.warn('Speech synthesis call failed:', e);
+  // Pre-load voices on component mount
+  useEffect(() => {
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      try {
+        window.speechSynthesis.getVoices();
+        const handleVoicesChanged = () => {
+          try {
+            window.speechSynthesis.getVoices();
+          } catch {}
+        };
+        window.speechSynthesis.onvoiceschanged = handleVoicesChanged;
+        return () => {
+          if (window.speechSynthesis.onvoiceschanged === handleVoicesChanged) {
+            window.speechSynthesis.onvoiceschanged = null;
+          }
+        };
+      } catch {}
     }
-  };
+  }, []);
 
   // Stop native speech
   const stopNativeSpeech = () => {
+    if (speechTimerRef.current) {
+      clearInterval(speechTimerRef.current);
+      speechTimerRef.current = null;
+    }
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       try {
         window.speechSynthesis.cancel();
@@ -106,6 +78,112 @@ export const AudioPlayerSection: React.FC<AudioPlayerSectionProps> = ({
         console.warn(e);
       }
     }
+  };
+
+  // Helper to speak via native browser Web Speech API for fallback voice
+  const speakNative = (textToSpeak: string) => {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+    stopNativeSpeech();
+
+    // Small delay prevents queue collision in Chromium speech engines
+    setTimeout(() => {
+      try {
+        window.speechSynthesis.resume();
+        const utterance = new SpeechSynthesisUtterance(textToSpeak);
+        utterance.rate = Math.max(0.7, Math.min(1.5, currentAudio?.speed || 1.0));
+        utterance.pitch = Math.max(0.7, Math.min(1.3, currentAudio?.pitch || 1.0));
+        utterance.volume = isMuted ? 0 : volume;
+
+        const voices = window.speechSynthesis.getVoices();
+        if (voices && voices.length > 0) {
+          const urduVoice = voices.find(v => 
+            v.lang.toLowerCase().startsWith('ur') || 
+            v.lang.toLowerCase().includes('pk') || 
+            v.name.toLowerCase().includes('pakistan') || 
+            v.name.toLowerCase().includes('urdu')
+          ) || voices.find(v => 
+            v.lang.toLowerCase().startsWith('hi') || 
+            v.name.toLowerCase().includes('hindi')
+          ) || voices.find(v => 
+            v.lang.toLowerCase().includes('in')
+          );
+
+          if (urduVoice) {
+            utterance.voice = urduVoice;
+            utterance.lang = urduVoice.lang;
+          } else {
+            const defaultVoice = voices.find(v => v.default) || voices[0];
+            if (defaultVoice) {
+              utterance.voice = defaultVoice;
+            }
+          }
+        }
+
+        const estDuration = currentAudio?.durationSec || Math.max(2.5, textToSpeak.trim().split(/\s+/).length / (2.2 * (currentAudio?.speed || 1)));
+        setDuration(estDuration);
+
+        utterance.onstart = () => {
+          setIsPlaying(true);
+          const startTimestamp = Date.now();
+          if (speechTimerRef.current) clearInterval(speechTimerRef.current);
+          speechTimerRef.current = setInterval(() => {
+            const elapsed = (Date.now() - startTimestamp) / 1000;
+            if (elapsed >= estDuration) {
+              if (speechTimerRef.current) {
+                clearInterval(speechTimerRef.current);
+                speechTimerRef.current = null;
+              }
+              setIsPlaying(false);
+              setCurrentTime(0);
+            } else {
+              setCurrentTime(elapsed);
+            }
+          }, 100);
+        };
+
+        utterance.onboundary = (event) => {
+          if (event.charIndex && textToSpeak.length > 0) {
+            const ratio = event.charIndex / textToSpeak.length;
+            setCurrentTime(ratio * estDuration);
+          }
+        };
+
+        utterance.onend = () => {
+          if (speechTimerRef.current) {
+            clearInterval(speechTimerRef.current);
+            speechTimerRef.current = null;
+          }
+          setIsPlaying(false);
+          setCurrentTime(0);
+        };
+
+        utterance.onerror = (e) => {
+          console.warn('Native speech synthesis error:', e);
+          if (speechTimerRef.current) {
+            clearInterval(speechTimerRef.current);
+            speechTimerRef.current = null;
+          }
+          if (e.error === 'language-unavailable' || e.error === 'voice-unavailable') {
+            const genericUtterance = new SpeechSynthesisUtterance(textToSpeak);
+            genericUtterance.rate = utterance.rate;
+            genericUtterance.pitch = utterance.pitch;
+            genericUtterance.onstart = () => setIsPlaying(true);
+            genericUtterance.onend = () => {
+              setIsPlaying(false);
+              setCurrentTime(0);
+            };
+            window.speechSynthesis.speak(genericUtterance);
+          } else {
+            setIsPlaying(false);
+          }
+        };
+
+        window.speechSynthesis.speak(utterance);
+      } catch (e) {
+        console.warn('Speech synthesis call failed:', e);
+        setIsPlaying(false);
+      }
+    }, 40);
   };
 
   // Initialize audio when currentAudio changes
@@ -116,38 +194,46 @@ export const AudioPlayerSection: React.FC<AudioPlayerSectionProps> = ({
       audioRef.current.pause();
     }
     stopNativeSpeech();
+    setCurrentTime(0);
 
-    const audio = new Audio(currentAudio.audioUrl);
-    audioRef.current = audio;
-    audio.playbackRate = playbackRate;
-    audio.volume = isMuted ? 0 : volume;
+    const estDuration = currentAudio.durationSec || 5;
+    setDuration(estDuration);
 
-    audio.onloadedmetadata = () => {
-      setDuration(audio.duration || currentAudio.durationSec || 5);
-    };
+    if (currentAudio.isAiGemini) {
+      const audio = new Audio(currentAudio.audioUrl);
+      audioRef.current = audio;
+      audio.playbackRate = playbackRate;
+      audio.volume = isMuted ? 0 : volume;
 
-    audio.ontimeupdate = () => {
-      setCurrentTime(audio.currentTime);
-    };
+      audio.onloadedmetadata = () => {
+        setDuration(audio.duration || estDuration);
+      };
 
-    audio.onended = () => {
-      setIsPlaying(false);
-      setCurrentTime(0);
-    };
+      audio.ontimeupdate = () => {
+        setCurrentTime(audio.currentTime);
+      };
 
-    // Auto-play newly generated audio
-    audio.play().then(() => {
-      setIsPlaying(true);
-      if (!currentAudio.isAiGemini) {
-        speakNative(currentAudio.text);
-      }
-    }).catch(err => {
-      console.warn('Auto-play prevented by browser policy (user interaction needed):', err);
-      // Even if background audio autoplay is blocked, try native speech on first gesture
-    });
+      audio.onended = () => {
+        setIsPlaying(false);
+        setCurrentTime(0);
+      };
+
+      // Auto-play newly generated audio
+      audio.play().then(() => {
+        setIsPlaying(true);
+      }).catch(err => {
+        console.warn('Auto-play blocked by browser policy:', err);
+        setIsPlaying(false);
+      });
+    } else {
+      // In device voice mode, speak directly
+      speakNative(currentAudio.text);
+    }
 
     return () => {
-      audio.pause();
+      if (audioRef.current) {
+        audioRef.current.pause();
+      }
       stopNativeSpeech();
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
@@ -157,34 +243,41 @@ export const AudioPlayerSection: React.FC<AudioPlayerSectionProps> = ({
 
   // Handle Play/Pause
   const togglePlay = () => {
-    if (!audioRef.current || !currentAudio) return;
+    if (!currentAudio) return;
     if (isPlaying) {
-      audioRef.current.pause();
-      stopNativeSpeech();
+      if (currentAudio.isAiGemini && audioRef.current) {
+        audioRef.current.pause();
+      } else {
+        stopNativeSpeech();
+      }
       setIsPlaying(false);
     } else {
-      if (!currentAudio.isAiGemini) {
+      if (currentAudio.isAiGemini) {
+        if (audioRef.current) {
+          audioRef.current.play().then(() => {
+            setIsPlaying(true);
+          }).catch(err => {
+            console.warn('Audio play error, using speech:', err);
+            speakNative(currentAudio.text);
+          });
+        }
+      } else {
         speakNative(currentAudio.text);
       }
-      audioRef.current.play().then(() => {
-        setIsPlaying(true);
-      }).catch(err => {
-        console.warn('Audio play error, using speech:', err);
-        setIsPlaying(true);
-      });
     }
   };
 
   // Replay
   const handleReplay = () => {
-    if (!audioRef.current || !currentAudio) return;
-    stopNativeSpeech();
-    audioRef.current.currentTime = 0;
-    if (!currentAudio.isAiGemini) {
+    if (!currentAudio) return;
+    setCurrentTime(0);
+    if (currentAudio.isAiGemini && audioRef.current) {
+      audioRef.current.currentTime = 0;
+      audioRef.current.play().then(() => setIsPlaying(true)).catch(console.warn);
+    } else {
+      stopNativeSpeech();
       speakNative(currentAudio.text);
     }
-    audioRef.current.play().catch(console.warn);
-    setIsPlaying(true);
   };
 
   // Seek
@@ -549,11 +642,25 @@ export const AudioPlayerSection: React.FC<AudioPlayerSectionProps> = ({
       <div className="mt-4 pt-3 border-t border-slate-800/60">
         <div className="text-[11px] text-slate-400 mb-1 flex items-center justify-between">
           <span className="font-urdu">براہ راست پلیئر (Standard Audio Player):</span>
-          <span className="text-[10px] text-slate-500">اگر ویوفارم نہ چلے تو یہاں سے پلے کریں</span>
+          <span className="text-[10px] text-slate-500">
+            {currentAudio.isAiGemini ? 'Gemini 3.8 AI اسٹوڈیو پلیئر' : 'ڈیوائس اسپیچ پلیئر'}
+          </span>
         </div>
         <audio
           controls
           src={currentAudio.audioUrl}
+          onPlay={() => {
+            if (!currentAudio.isAiGemini) {
+              speakNative(currentAudio.text);
+            }
+            setIsPlaying(true);
+          }}
+          onPause={() => {
+            if (!currentAudio.isAiGemini) {
+              stopNativeSpeech();
+            }
+            setIsPlaying(false);
+          }}
           className="w-full h-10 rounded-lg opacity-85 hover:opacity-100 transition-opacity"
         >
           آپ کا براؤزر آڈیو پلیئر سپورٹ نہیں کرتا۔

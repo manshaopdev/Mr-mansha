@@ -1,6 +1,14 @@
 import { GoogleGenAI } from '@google/genai';
 import lamejs from 'lamejs';
 
+// Polyfill lamejs internal global requirements in serverless environment
+if (typeof (globalThis as any).MPEGMode === 'undefined') {
+  try {
+    (globalThis as any).MPEGMode = (lamejs as any)?.MPEGMode || require('lamejs/src/js/MPEGMode.js');
+    (globalThis as any).Lame = (lamejs as any)?.Lame || require('lamejs/src/js/Lame.js');
+  } catch {}
+}
+
 function convertWavBase64ToMp3Base64(base64Wav: string): string {
   const wavBuffer = Buffer.from(base64Wav, 'base64');
   let dataOffset = 44;
@@ -67,35 +75,6 @@ function convertWavBase64ToMp3Base64(base64Wav: string): string {
   }
 }
 
-function generateServerFallbackWav(text: string, _voiceId?: string): string {
-  const words = text.trim().split(/\s+/).length;
-  const durationSec = Math.max(1.8, Math.min(25, words / 2.5));
-  const sampleRate = 24000;
-  const totalSamples = Math.floor(sampleRate * durationSec);
-
-  // Clean silent buffer (0 amplitude) so no harsh synth music plays
-  const pcm16 = new Int16Array(totalSamples);
-
-  const dataSize = totalSamples * 2;
-  const wavBuf = Buffer.alloc(44 + dataSize);
-  wavBuf.write('RIFF', 0);
-  wavBuf.writeUInt32LE(36 + dataSize, 4);
-  wavBuf.write('WAVE', 8);
-  wavBuf.write('fmt ', 12);
-  wavBuf.writeUInt32LE(16, 16);
-  wavBuf.writeUInt16LE(1, 20); // PCM
-  wavBuf.writeUInt16LE(1, 22); // Mono
-  wavBuf.writeUInt32LE(sampleRate, 24);
-  wavBuf.writeUInt32LE(sampleRate * 2, 28);
-  wavBuf.writeUInt16LE(2, 32);
-  wavBuf.writeUInt16LE(16, 34);
-  wavBuf.write('data', 36);
-  wavBuf.writeUInt32LE(dataSize, 40);
-  Buffer.from(pcm16.buffer).copy(wavBuf, 44);
-
-  return wavBuf.toString('base64');
-}
-
 export default async function handler(req: any, res: any) {
   if (req.method !== 'POST') {
     return res.status(405).json({ success: false, error: 'Method not allowed' });
@@ -109,27 +88,16 @@ export default async function handler(req: any, res: any) {
 
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
-      const fallbackWav = generateServerFallbackWav(text, voiceId);
-      const fallbackMp3 = convertWavBase64ToMp3Base64(fallbackWav);
       return res.json({
         success: true,
-        audioBase64: fallbackMp3,
-        mimeType: 'audio/mp3',
-        wavBase64: fallbackWav,
         isAiGemini: false,
+        note: 'no_api_key',
         voiceId: voiceId || 'hamza_news',
-        note: 'Synthesized voice mode (set GEMINI_API_KEY in hosting env for Gemini 3.8 studio voice)'
+        message: 'No GEMINI_API_KEY configured on host; activating device speech engine.'
       });
     }
 
-    const ai = new GoogleGenAI({
-      apiKey: apiKey,
-      httpOptions: {
-        headers: {
-          'User-Agent': 'aistudio-build',
-        }
-      }
-    });
+    const ai = new GoogleGenAI({ apiKey });
 
     const voiceMap: Record<string, { voiceName: 'Puck' | 'Charon' | 'Kore' | 'Fenrir' | 'Zephyr' | 'Aoede'; defaultStyle: string }> = {
       hamza_news: {
@@ -172,7 +140,7 @@ export default async function handler(req: any, res: any) {
     let base64Wav = '';
     let isAiGemini = false;
 
-    const candidateModels = ['gemini-3.8-flash-tts', 'gemini-3.8-flash-lite-tts'];
+    const candidateModels = ['gemini-3.8-flash-lite-tts', 'gemini-3.8-flash-tts'];
     for (const modelName of candidateModels) {
       try {
         const response = await ai.models.generateContent({
@@ -201,7 +169,7 @@ export default async function handler(req: any, res: any) {
         });
 
         const audioData = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
-        if (audioData) {
+        if (audioData && audioData.length > 500) {
           base64Wav = audioData;
           isAiGemini = true;
           break;
@@ -211,9 +179,14 @@ export default async function handler(req: any, res: any) {
       }
     }
 
-    if (!base64Wav) {
-      base64Wav = generateServerFallbackWav(text, voiceId);
-      isAiGemini = false;
+    if (!base64Wav || !isAiGemini) {
+      return res.json({
+        success: true,
+        isAiGemini: false,
+        note: 'quota_exceeded',
+        voiceId: voiceId || 'hamza_news',
+        message: 'API quota reached; activating device speech engine.'
+      });
     }
 
     let base64Mp3 = '';
@@ -228,17 +201,12 @@ export default async function handler(req: any, res: any) {
       audioBase64: base64Mp3,
       mimeType: 'audio/mp3',
       wavBase64: base64Wav,
-      isAiGemini,
+      isAiGemini: true,
       voiceId: voiceId || 'hamza_news'
     });
   } catch (err: any) {
-    const fallbackWav = generateServerFallbackWav(req.body?.text || 'آواز', req.body?.voiceId);
-    const fallbackMp3 = convertWavBase64ToMp3Base64(fallbackWav);
     return res.json({
       success: true,
-      audioBase64: fallbackMp3,
-      mimeType: 'audio/mp3',
-      wavBase64: fallbackWav,
       isAiGemini: false,
       voiceId: req.body?.voiceId || 'hamza_news',
       error: err.message
