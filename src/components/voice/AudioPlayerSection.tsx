@@ -115,8 +115,12 @@ export const AudioPlayerSection: React.FC<AudioPlayerSectionProps> = ({
             const defaultVoice = voices.find(v => v.default) || voices[0];
             if (defaultVoice) {
               utterance.voice = defaultVoice;
+              utterance.lang = defaultVoice.lang;
             }
           }
+        } else {
+          // If voices list is not loaded yet, use default browser language
+          utterance.lang = typeof navigator !== 'undefined' ? (navigator.language || 'en-US') : 'en-US';
         }
 
         const estDuration = currentAudio?.durationSec || Math.max(2.5, textToSpeak.trim().split(/\s+/).length / (2.2 * (currentAudio?.speed || 1)));
@@ -157,25 +161,34 @@ export const AudioPlayerSection: React.FC<AudioPlayerSectionProps> = ({
           setCurrentTime(0);
         };
 
-        utterance.onerror = (e) => {
-          console.warn('Native speech synthesis error:', e);
+        utterance.onerror = (e: any) => {
+          console.warn('Native speech synthesis error:', e?.error || e);
           if (speechTimerRef.current) {
             clearInterval(speechTimerRef.current);
             speechTimerRef.current = null;
           }
-          if (e.error === 'language-unavailable' || e.error === 'voice-unavailable') {
-            const genericUtterance = new SpeechSynthesisUtterance(textToSpeak);
-            genericUtterance.rate = utterance.rate;
-            genericUtterance.pitch = utterance.pitch;
-            genericUtterance.onstart = () => setIsPlaying(true);
-            genericUtterance.onend = () => {
-              setIsPlaying(false);
-              setCurrentTime(0);
-            };
-            window.speechSynthesis.speak(genericUtterance);
-          } else {
-            setIsPlaying(false);
+          // If first attempt failed, retry once with bare default voice
+          if (e?.error === 'language-unavailable' || e?.error === 'voice-unavailable' || e?.error === 'not-allowed') {
+            try {
+              window.speechSynthesis.resume();
+              const genericUtterance = new SpeechSynthesisUtterance(textToSpeak);
+              const allVoices = window.speechSynthesis.getVoices();
+              if (allVoices.length > 0) {
+                const safeVoice = allVoices.find(v => v.default) || allVoices[0];
+                genericUtterance.voice = safeVoice;
+                genericUtterance.lang = safeVoice.lang;
+              }
+              genericUtterance.rate = Math.max(0.7, Math.min(1.5, currentAudio?.speed || 1.0));
+              genericUtterance.onstart = () => setIsPlaying(true);
+              genericUtterance.onend = () => {
+                setIsPlaying(false);
+                setCurrentTime(0);
+              };
+              window.speechSynthesis.speak(genericUtterance);
+              return;
+            } catch {}
           }
+          setIsPlaying(false);
         };
 
         window.speechSynthesis.speak(utterance);
