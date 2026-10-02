@@ -591,31 +591,14 @@ async function startServer() {
     }
   }
 
-  function generateServerFallbackWav(text: string, voiceId?: string): string {
+  function generateServerFallbackWav(text: string, _voiceId?: string): string {
     const words = text.trim().split(/\s+/).length;
     const durationSec = Math.max(1.8, Math.min(25, words / 2.5));
     const sampleRate = 24000;
     const totalSamples = Math.floor(sampleRate * durationSec);
-    const isFemale = voiceId === 'ayesha_story' || voiceId === 'fatima_doc' || voiceId === 'sobia_poetry' || voiceId === 'mariam_calm';
-    const baseFreq = isFemale ? 220 : (voiceId === 'chaudhry_elder' ? 115 : 135);
-    const syllableRate = 4.2;
 
+    // Clean silent buffer (0 amplitude) so no harsh synth music plays
     const pcm16 = new Int16Array(totalSamples);
-    for (let i = 0; i < totalSamples; i++) {
-      const t = i / sampleRate;
-      const syllable = Math.max(0, Math.sin(2 * Math.PI * syllableRate * t));
-      const env = Math.pow(syllable, 1.8);
-      const f0 = baseFreq + Math.sin(2 * Math.PI * 1.5 * t) * 6;
-      const s1 = Math.sin(2 * Math.PI * f0 * t);
-      const s2 = 0.5 * Math.sin(2 * Math.PI * (f0 * 2.1) * t);
-      const s3 = 0.25 * Math.sin(2 * Math.PI * (f0 * 3.7) * t);
-      const breath = (Math.random() * 2 - 1) * 0.04;
-      let fade = 1.0;
-      if (t < 0.08) fade = t / 0.08;
-      if (t > durationSec - 0.15) fade = Math.max(0, (durationSec - t) / 0.15);
-      const sample = (s1 + s2 + s3 + breath) * env * fade * 0.5;
-      pcm16[i] = Math.max(-32768, Math.min(32767, Math.floor(sample * 32767)));
-    }
 
     const dataSize = totalSamples * 2;
     const wavBuf = Buffer.alloc(44 + dataSize);

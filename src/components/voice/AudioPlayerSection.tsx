@@ -50,22 +50,37 @@ export const AudioPlayerSection: React.FC<AudioPlayerSectionProps> = ({
     try {
       window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(textToSpeak);
+      utterance.lang = 'ur-PK';
       utterance.rate = Math.max(0.6, Math.min(1.8, currentAudio?.speed || 1.0));
       utterance.pitch = Math.max(0.6, Math.min(1.4, currentAudio?.pitch || 1.0));
+      utterance.volume = isMuted ? 0 : volume;
 
       const voices = window.speechSynthesis.getVoices();
       if (voices && voices.length > 0) {
         const urduVoice = voices.find(v => 
-          v.lang.toLowerCase().includes('ur') || 
-          v.lang.includes('PK') || 
+          v.lang.toLowerCase().startsWith('ur') || 
+          v.lang.toLowerCase().includes('pk') || 
           v.name.toLowerCase().includes('pakistan') || 
           v.name.toLowerCase().includes('urdu')
-        ) || voices.find(v => v.lang.toLowerCase().includes('hi') || v.lang.includes('IN')) || voices.find(v => v.lang.startsWith('en')) || voices[0];
+        ) || voices.find(v => 
+          v.lang.toLowerCase().startsWith('hi') || 
+          v.name.toLowerCase().includes('hindi')
+        ) || voices.find(v => 
+          v.lang.toLowerCase().includes('in')
+        );
 
         if (urduVoice) {
           utterance.voice = urduVoice;
+          utterance.lang = urduVoice.lang;
         }
       }
+
+      utterance.onboundary = (event) => {
+        if (event.charIndex && textToSpeak.length > 0) {
+          const ratio = event.charIndex / textToSpeak.length;
+          setCurrentTime(ratio * (duration || 5));
+        }
+      };
 
       utterance.onend = () => {
         setIsPlaying(false);
