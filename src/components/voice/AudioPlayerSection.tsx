@@ -38,10 +38,60 @@ export const AudioPlayerSection: React.FC<AudioPlayerSectionProps> = ({
   const [volume, setVolume] = useState(1.0);
   const [isMuted, setIsMuted] = useState(false);
   const [downloadSuccess, setDownloadSuccess] = useState(false);
+  const [showDeployGuide, setShowDeployGuide] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const animationFrameRef = useRef<number | null>(null);
+
+  // Helper to speak via native browser Web Speech API for fallback voice
+  const speakNative = (textToSpeak: string) => {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+    try {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(textToSpeak);
+      utterance.rate = Math.max(0.6, Math.min(1.8, currentAudio?.speed || 1.0));
+      utterance.pitch = Math.max(0.6, Math.min(1.4, currentAudio?.pitch || 1.0));
+
+      const voices = window.speechSynthesis.getVoices();
+      if (voices && voices.length > 0) {
+        const urduVoice = voices.find(v => 
+          v.lang.toLowerCase().includes('ur') || 
+          v.lang.includes('PK') || 
+          v.name.toLowerCase().includes('pakistan') || 
+          v.name.toLowerCase().includes('urdu')
+        ) || voices.find(v => v.lang.toLowerCase().includes('hi') || v.lang.includes('IN')) || voices.find(v => v.lang.startsWith('en')) || voices[0];
+
+        if (urduVoice) {
+          utterance.voice = urduVoice;
+        }
+      }
+
+      utterance.onend = () => {
+        setIsPlaying(false);
+        setCurrentTime(0);
+      };
+
+      utterance.onerror = (e) => {
+        console.warn('Native speech synthesis error:', e);
+      };
+
+      window.speechSynthesis.speak(utterance);
+    } catch (e) {
+      console.warn('Speech synthesis call failed:', e);
+    }
+  };
+
+  // Stop native speech
+  const stopNativeSpeech = () => {
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      try {
+        window.speechSynthesis.cancel();
+      } catch (e) {
+        console.warn(e);
+      }
+    }
+  };
 
   // Initialize audio when currentAudio changes
   useEffect(() => {
@@ -50,6 +100,7 @@ export const AudioPlayerSection: React.FC<AudioPlayerSectionProps> = ({
     if (audioRef.current) {
       audioRef.current.pause();
     }
+    stopNativeSpeech();
 
     const audio = new Audio(currentAudio.audioUrl);
     audioRef.current = audio;
@@ -69,15 +120,20 @@ export const AudioPlayerSection: React.FC<AudioPlayerSectionProps> = ({
       setCurrentTime(0);
     };
 
-    // Auto-play newly generated audio so user immediately hears it
+    // Auto-play newly generated audio
     audio.play().then(() => {
       setIsPlaying(true);
+      if (!currentAudio.isAiGemini) {
+        speakNative(currentAudio.text);
+      }
     }).catch(err => {
       console.warn('Auto-play prevented by browser policy (user interaction needed):', err);
+      // Even if background audio autoplay is blocked, try native speech on first gesture
     });
 
     return () => {
       audio.pause();
+      stopNativeSpeech();
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
       }
@@ -86,22 +142,33 @@ export const AudioPlayerSection: React.FC<AudioPlayerSectionProps> = ({
 
   // Handle Play/Pause
   const togglePlay = () => {
-    if (!audioRef.current) return;
+    if (!audioRef.current || !currentAudio) return;
     if (isPlaying) {
       audioRef.current.pause();
+      stopNativeSpeech();
       setIsPlaying(false);
     } else {
+      if (!currentAudio.isAiGemini) {
+        speakNative(currentAudio.text);
+      }
       audioRef.current.play().then(() => {
         setIsPlaying(true);
-      }).catch(console.error);
+      }).catch(err => {
+        console.warn('Audio play error, using speech:', err);
+        setIsPlaying(true);
+      });
     }
   };
 
   // Replay
   const handleReplay = () => {
-    if (!audioRef.current) return;
+    if (!audioRef.current || !currentAudio) return;
+    stopNativeSpeech();
     audioRef.current.currentTime = 0;
-    audioRef.current.play();
+    if (!currentAudio.isAiGemini) {
+      speakNative(currentAudio.text);
+    }
+    audioRef.current.play().catch(console.warn);
     setIsPlaying(true);
   };
 
@@ -274,9 +341,26 @@ export const AudioPlayerSection: React.FC<AudioPlayerSectionProps> = ({
             آواز کامیابی سے تیار ہو گئی ہے! نیچے چلائیں، سنیں اور MP3 ڈاؤن لوڈ کریں:
           </span>
         </div>
-        <span className="text-[11px] bg-emerald-950/80 text-emerald-400 border border-emerald-500/30 px-2.5 py-0.5 rounded-full font-mono">
-          24kHz MP3 HD
-        </span>
+        <div className="flex items-center gap-2">
+          {currentAudio.isAiGemini ? (
+            <span className="text-[11px] bg-emerald-950/80 text-emerald-300 border border-emerald-500/40 px-2.5 py-0.5 rounded-full font-mono flex items-center gap-1 shadow-sm">
+              <Sparkles className="w-3 h-3 text-emerald-400" /> Gemini 3.8 AI Flagship
+            </span>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setShowDeployGuide(true)}
+              className="text-[11px] bg-amber-950/90 hover:bg-amber-900 text-amber-300 border border-amber-500/50 px-2.5 py-0.5 rounded-full flex items-center gap-1 transition-all cursor-pointer shadow-sm"
+              title="گٹ ہب یا ورسل پر اصلی AI آواز سیٹ کرنے کا طریقہ دیکھیں"
+            >
+              <span>لوکل نیٹیو وائس</span>
+              <span className="underline ml-1 font-urdu">گٹ ہب لائیو گائیڈ ℹ️</span>
+            </button>
+          )}
+          <span className="text-[11px] bg-emerald-950/80 text-emerald-400 border border-emerald-500/30 px-2.5 py-0.5 rounded-full font-mono">
+            24kHz MP3 HD
+          </span>
+        </div>
       </div>
 
       {/* Voice info row */}
@@ -460,6 +544,71 @@ export const AudioPlayerSection: React.FC<AudioPlayerSectionProps> = ({
           آپ کا براؤزر آڈیو پلیئر سپورٹ نہیں کرتا۔
         </audio>
       </div>
+
+      {/* GitHub / Vercel Live Deployment Guide Modal */}
+      {showDeployGuide && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-slate-900 border border-emerald-500/40 rounded-2xl max-w-lg w-full p-6 text-slate-200 shadow-2xl relative">
+            <button
+              type="button"
+              onClick={() => setShowDeployGuide(false)}
+              className="absolute top-4 right-4 text-slate-400 hover:text-white p-1 rounded-lg bg-slate-800 text-sm cursor-pointer"
+            >
+              ✕ بند کریں
+            </button>
+
+            <div className="flex items-center gap-2 mb-4 text-emerald-400">
+              <Sparkles className="w-5 h-5" />
+              <h3 className="font-bold text-lg text-white font-urdu">
+                گٹ ہب یا ورسل پر اصلی AI آواز لائیو کرنے کا طریقہ
+              </h3>
+            </div>
+
+            <div className="space-y-4 text-sm text-slate-300 leading-relaxed font-urdu">
+              <div className="p-3 bg-emerald-950/40 border border-emerald-500/30 rounded-xl">
+                <p className="font-semibold text-emerald-300 mb-1">
+                  1. ورسل (Vercel) پر لائیو کرنا (سب سے آسان):
+                </p>
+                <p className="text-xs text-slate-300">
+                  اگر آپ نے گٹ ہب ریپوزٹری ورسل سے منسلک کی ہے، تو ورسل ڈیش بورڈ میں <strong>Project Settings → Environment Variables</strong> پر جائیں اور یہ ویری ایبل شامل کریں:
+                </p>
+                <div className="mt-2 bg-slate-950 p-2 rounded-lg font-mono text-xs text-emerald-400 flex items-center justify-between border border-slate-800">
+                  <span>Key: GEMINI_API_KEY</span>
+                  <span className="text-slate-500 text-[10px]">Google AI Studio Key</span>
+                </div>
+              </div>
+
+              <div className="p-3 bg-slate-950/80 border border-slate-800 rounded-xl">
+                <p className="font-semibold text-white mb-1">
+                  2. رینڈر یا سرور (Render / Railway / VPS):
+                </p>
+                <p className="text-xs text-slate-400">
+                  سرور ڈیش بورڈ پر Environment Variables میں <code>GEMINI_API_KEY</code> سیٹ کریں اور Start Command <code>npm start</code> رکھیں۔
+                </p>
+              </div>
+
+              <div className="p-3 bg-slate-950/80 border border-slate-800 rounded-xl">
+                <p className="font-semibold text-white mb-1">
+                  3. گٹ ہب پیجز (GitHub Pages):
+                </p>
+                <p className="text-xs text-slate-400">
+                  گٹ ہب پیجز بغیر سرور کے صرف اسٹیٹک پیج چلاتا ہے۔ اب آپ کے براؤزر کا نیٹیو وائس انجن آٹو سنک کر کے آواز پلے کرتا ہے تاکہ لائیو پر آواز ہمیشہ بولے۔
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-5 pt-3 border-t border-slate-800 flex justify-end">
+              <button
+                type="button"
+                onClick={() => setShowDeployGuide(false)}
+                className="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold font-urdu cursor-pointer transition-colors"
+              >
+                سمجھ گیا، شکریہ!
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

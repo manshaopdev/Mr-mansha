@@ -72,34 +72,6 @@ export async function generateClientSpeechAudio(
     mp3DataUrl = audioUrl;
   }
 
-  // Also trigger browser Web Speech synthesis for simultaneous speech playback
-  try {
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = Math.max(0.5, Math.min(2.0, speed));
-      utterance.pitch = Math.max(0.5, Math.min(1.5, pitch));
-      
-      const voices = window.speechSynthesis.getVoices();
-      if (voices && voices.length > 0) {
-        // Look for Urdu, Hindi, or South Asian English voices
-        const urduVoice = voices.find(v => 
-          v.lang.toLowerCase().includes('ur') || 
-          v.lang.includes('PK') || 
-          v.name.toLowerCase().includes('pakistan') || 
-          v.name.toLowerCase().includes('urdu')
-        ) || voices.find(v => v.lang.toLowerCase().includes('hi') || v.lang.includes('IN')) || voices[0];
-
-        if (urduVoice) {
-          utterance.voice = urduVoice;
-        }
-      }
-      window.speechSynthesis.speak(utterance);
-    }
-  } catch (synthErr) {
-    console.warn('[WebSpeech fallback]:', synthErr);
-  }
-
   return {
     audioUrl,
     mp3DataUrl,
